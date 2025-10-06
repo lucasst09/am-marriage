@@ -1,0 +1,7 @@
+services:
+  ammarriage:
+    build: .
+    ports:
+      - "3000:80"
+    container_name: ammarriage-app
+    restart: unless-stopped
