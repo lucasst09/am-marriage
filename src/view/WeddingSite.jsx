@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import "../css/weddingSite/WeddingSite.css";
 import { obterPessoasDisponiveis, verificarConfirmacaoExistente, salvarConfirmacao } from "../data/mockData.js";
 import carroImage from "../assets/img/carro.jpg";
+import img1 from "../assets/img/image1.jpg";
 
 export default function WeddingSite() {
   const [open, setOpen] = useState(false);
@@ -191,7 +192,7 @@ export default function WeddingSite() {
             <a href="#info" className="btn ghost">Ver detalhes</a>
           </div>
           <div className="photo ph">
-            <img src={carroImage} alt="Foto do casal"/>
+            <img src={img1} alt="Foto do casal"/>
           </div>
         </div>
         <svg className="floral tl" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#EBD9CF"/><path d="M10 95 C40 80,70 120,110 90" stroke="#D7B7A6" strokeWidth="8" fill="none" strokeLinecap="round"/></svg>
