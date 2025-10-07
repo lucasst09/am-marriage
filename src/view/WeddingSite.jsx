@@ -21,7 +21,7 @@ export default function WeddingSite() {
 
   const calcularTempoRestante = () => {
     const agora = new Date();
-    const casamento = new Date('2025-12-10T17:00:00');
+    const casamento = new Date('2025-12-06T19:00:00');
     
     const diferenca = casamento.getTime() - agora.getTime();
     
