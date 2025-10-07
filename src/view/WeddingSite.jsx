@@ -168,7 +168,17 @@ export default function WeddingSite() {
   }, [open]);
 
   return (
-    <div className="min-h-screen" style={{ background: "#F8F4EE", color: "#2E2A27" }}>
+    <div 
+      className="min-h-screen" 
+      style={{ 
+        backgroundImage: `url(${img1})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
+        color: "#2E2A27" 
+      }}
+    >
       <header className="header">
         <div className="container row between center">
           <div className="brand">A & M</div>
@@ -191,12 +201,7 @@ export default function WeddingSite() {
             <button className="btn" onClick={() => setOpen(true)}>Confirmar Presença</button>
             <a href="#info" className="btn ghost">Ver detalhes</a>
           </div>
-          <div className="photo ph">
-            <img src={img1} alt="Foto do casal"/>
-          </div>
         </div>
-        <svg className="floral tl" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#EBD9CF"/><path d="M10 95 C40 80,70 120,110 90" stroke="#D7B7A6" strokeWidth="8" fill="none" strokeLinecap="round"/></svg>
-        <svg className="floral br" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg"><circle cx="30" cy="30" r="30" fill="#EBD9CF"/><path d="M10 95 C40 80,70 120,110 90" stroke="#D7B7A6" strokeWidth="8" fill="none" strokeLinecap="round"/></svg>
       </section>
       <section className="container grid4">
         {["Dias","Horas","Min","Seg"].map((l,i)=> (
@@ -258,7 +263,6 @@ export default function WeddingSite() {
           </div>
         </div>
       </section>
-      <footer className="container center foot muted">Feito com ♥ — Estilo Pinterest: off‑white, serif elegante, cartões arredondados e RSVP destacado.</footer>
       {open && (
         <div 
           className="modal" 

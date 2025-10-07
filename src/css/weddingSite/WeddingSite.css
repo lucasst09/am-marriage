@@ -96,7 +96,7 @@ body {
 
 .hero {
   position: relative;
-  padding: 40px 0;
+  padding: 100px 0;
 }
 
 .kicker {
@@ -120,7 +120,7 @@ body {
 
 .photo img{
   margin: 24px auto 0;
-  max-width: 900px;
+  max-width: auto;
   height: 420px;
   border-radius: 22px;
   background: #e8e2da;
@@ -131,10 +131,16 @@ body {
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 }
 
-.ph {
+.ph img{
   font-size: 14px;
 }
 
+@media (max-width: 900px) {
+  .photo img{
+    max-width: 300px;
+    height: 300px;
+  }
+}
 .floral {
   position: absolute;
   width: 140px;
@@ -156,22 +162,26 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
-  padding: 24px 20px;
+  padding: 40px 20px;
+  margin-top: 60px;
 }
 
 @media (min-width: 768px) {
   .grid4 {
     grid-template-columns: repeat(4, 1fr);
+    padding: 60px 20px;
+    margin-top: 80px;
   }
 }
 
 .card {
-  background: #fff;
+  background: rgba(255, 255, 255, 0.9);
   border: 1px solid var(--border);
   border-radius: 22px;
   padding: 22px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
   flex-direction: column;
+  backdrop-filter: blur(10px);
 }
 
 .count {
