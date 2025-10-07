@@ -21,12 +21,6 @@ a {
   padding: 0 20px;
 }
 
-.full {
-  width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-}
-
 html, body, #root {
   height: 100%;
   background: var(--bg);
@@ -86,7 +80,6 @@ body {
 
 .btn {
   border: 1px solid var(--border);
-  background: #fff;
   padding: 10px 16px;
   border-radius: 18px;
   box-shadow: 0 1px 6px rgba(0, 0, 0, 0.06);
@@ -125,7 +118,7 @@ body {
   color: #6b6058;
 }
 
-.photo {
+.photo img{
   margin: 24px auto 0;
   max-width: 900px;
   height: 420px;
