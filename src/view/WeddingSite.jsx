@@ -14,6 +14,7 @@ export default function WeddingSite() {
   const [opcao, setOpcao] = useState("Vou comparecer");
   const [jaConfirmado, setJaConfirmado] = useState(false);
   const [dadosConfirmacaoExistente, setDadosConfirmacaoExistente] = useState(null);
+  const [nomeValido, setNomeValido] = useState(false);
   const firstFieldRef = useRef(null);
 
   const handleNomeChange = (nome) => {
@@ -26,6 +27,7 @@ export default function WeddingSite() {
         const dependentes = pessoas.filter(pessoa => pessoa.tipo === "dependente");
         setDependentesDisponiveis(dependentes);
         setDependentesSelecionados([]);
+        setNomeValido(true);
         
         // Verificar se já existe confirmação
         const confirmacaoExistente = verificarConfirmacaoExistente(nome.toLowerCase());
@@ -53,12 +55,14 @@ export default function WeddingSite() {
         setDependentesSelecionados([]);
         setJaConfirmado(false);
         setDadosConfirmacaoExistente(null);
+        setNomeValido(false);
       }
     } else {
       setDependentesDisponiveis([]);
       setDependentesSelecionados([]);
       setJaConfirmado(false);
       setDadosConfirmacaoExistente(null);
+      setNomeValido(false);
     }
   };
 
@@ -84,6 +88,12 @@ export default function WeddingSite() {
     
     if (jaConfirmado) {
       alert("Você já confirmou sua presença anteriormente!");
+      return;
+    }
+
+    // Validar se o nome está na lista de convidados
+    if (!nomeValido) {
+      alert("Nome não encontrado na lista de convidados. Verifique se digitou corretamente ou entre em contato com os noivos.");
       return;
     }
 
@@ -252,7 +262,7 @@ export default function WeddingSite() {
                     fontSize: '14px',
                     marginBottom: '16px'
                   }}>
-                    ✅ Você já confirmou sua presença! Os dados abaixo são apenas para visualização.
+                    ✅ Você já confirmou sua presença anteriormente! Os dados abaixo são apenas para visualização.
                   </div>
                 )}
 
@@ -266,8 +276,39 @@ export default function WeddingSite() {
                       onChange={(e) => handleNomeChange(e.target.value)}
                       required 
                       disabled={jaConfirmado}
+                      style={{
+                        borderColor: nomeConvidado.trim() && !nomeValido ? '#dc3545' : undefined
+                      }}
                     />
                   </label>
+                  
+                  {nomeConvidado.trim() && !nomeValido && (
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#F8D7DA',
+                      border: '1px solid #F5C6CB',
+                      borderRadius: '8px',
+                      color: '#721C24',
+                      fontSize: '14px',
+                      marginTop: '8px'
+                    }}>
+                      ❌ Nome não encontrado na lista de convidados. Verifique se digitou corretamente ou entre em contato com os noivos.
+                    </div>
+                  )}
+
+                  {nomeValido && (
+                    <div style={{
+                      padding: '12px',
+                      backgroundColor: '#D4EDDA',
+                      border: '1px solid #C3E6CB',
+                      borderRadius: '8px',
+                      color: '#155724',
+                      fontSize: '14px',
+                      marginTop: '8px'
+                    }}>
+                      ✅ Nome encontrado! {dependentesDisponiveis.length > 0 ? 'Selecione seus acompanhantes abaixo.' : 'Você pode confirmar sua presença.'}
+                    </div>
+                  )}
                   
                   {dependentesDisponiveis.length > 0 && (
                     <div className="lbl">
@@ -318,20 +359,6 @@ export default function WeddingSite() {
                       </div>
                     </div>
                   )}
-
-                  {nomeConvidado.trim() && dependentesDisponiveis.length === 0 && !jaConfirmado && (
-                    <div style={{
-                      padding: '12px',
-                      backgroundColor: '#FFF3CD',
-                      border: '1px solid #FFEAA7',
-                      borderRadius: '8px',
-                      color: '#856404',
-                      fontSize: '14px',
-                      marginTop: '8px'
-                    }}>
-                      Nome não encontrado na lista de convidados. Verifique se digitou corretamente.
-                    </div>
-                  )}
                   
                   <div className="row gap">
                     <label className="lbl">Opção
@@ -339,7 +366,7 @@ export default function WeddingSite() {
                         className="inp"
                         value={opcao}
                         onChange={(e) => setOpcao(e.target.value)}
-                        disabled={jaConfirmado}
+                        disabled={jaConfirmado || !nomeValido}
                       >
                         <option>Vou comparecer</option>
                         <option>Não poderei</option>
@@ -352,7 +379,7 @@ export default function WeddingSite() {
                       placeholder="(61) 9 9999-9999" 
                       value={telefone}
                       onChange={(e) => setTelefone(e.target.value)}
-                      disabled={jaConfirmado}
+                      disabled={jaConfirmado || !nomeValido}
                     />
                   </label>
                   <label className="lbl">Observações
@@ -362,19 +389,19 @@ export default function WeddingSite() {
                       placeholder="Restrições alimentares, etc." 
                       value={observacoes}
                       onChange={(e) => setObservacoes(e.target.value)}
-                      disabled={jaConfirmado}
+                      disabled={jaConfirmado || !nomeValido}
                     />
                   </label>
                   <button 
                     className="btn full" 
                     type="submit"
-                    disabled={jaConfirmado}
+                    disabled={jaConfirmado || !nomeValido}
                     style={{
-                      opacity: jaConfirmado ? 0.5 : 1,
-                      cursor: jaConfirmado ? 'not-allowed' : 'pointer'
+                      opacity: (jaConfirmado || !nomeValido) ? 0.5 : 1,
+                      cursor: (jaConfirmado || !nomeValido) ? 'not-allowed' : 'pointer'
                     }}
                   >
-                    {jaConfirmado ? 'Já confirmado' : 'Enviar confirmação'}
+                    {jaConfirmado ? 'Já confirmado' : !nomeValido ? 'Nome não encontrado' : 'Enviar confirmação'}
                   </button>
                   <p className="hint">Dica: digite seu nome para ver seus acompanhantes disponíveis.</p>
                 </form>
