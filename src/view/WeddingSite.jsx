@@ -15,7 +15,33 @@ export default function WeddingSite() {
   const [jaConfirmado, setJaConfirmado] = useState(false);
   const [dadosConfirmacaoExistente, setDadosConfirmacaoExistente] = useState(null);
   const [nomeValido, setNomeValido] = useState(false);
+  const [tempoRestante, setTempoRestante] = useState({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
   const firstFieldRef = useRef(null);
+
+  const calcularTempoRestante = () => {
+    const agora = new Date();
+    const casamento = new Date('2025-12-10T17:00:00');
+    
+    const diferenca = casamento.getTime() - agora.getTime();
+    
+    if (diferenca > 0) {
+      const dias = Math.floor(diferenca / (1000 * 60 * 60 * 24));
+      const horas = Math.floor((diferenca % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutos = Math.floor((diferenca % (1000 * 60 * 60)) / (1000 * 60));
+      const segundos = Math.floor((diferenca % (1000 * 60)) / 1000);
+      
+      setTempoRestante({ dias, horas, minutos, segundos });
+    } else {
+      setTempoRestante({ dias: 0, horas: 0, minutos: 0, segundos: 0 });
+    }
+  };
+
+  useEffect(() => {
+    calcularTempoRestante();
+    const interval = setInterval(calcularTempoRestante, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const handleNomeChange = (nome) => {
     setNomeConvidado(nome);
@@ -29,7 +55,6 @@ export default function WeddingSite() {
         setDependentesSelecionados([]);
         setNomeValido(true);
         
-        // Verificar se já existe confirmação
         const confirmacaoExistente = verificarConfirmacaoExistente(nome.toLowerCase());
         if (confirmacaoExistente) {
           setJaConfirmado(true);
@@ -38,7 +63,6 @@ export default function WeddingSite() {
           setObservacoes(confirmacaoExistente.observacoes || "");
           setOpcao(confirmacaoExistente.principal === 1 ? "Vou comparecer" : "Não poderei");
           
-          // Marcar dependentes que foram confirmados
           const dependentesConfirmados = dependentes.filter(dep => 
             confirmacaoExistente.dependentes && confirmacaoExistente.dependentes[dep.id] === 1
           );
@@ -71,7 +95,7 @@ export default function WeddingSite() {
   }, [open]);
 
   const toggleDependente = (dependente) => {
-    if (jaConfirmado) return; // Não permitir alterar se já confirmado
+    if (jaConfirmado) return;
     
     setDependentesSelecionados(prev => {
       const jaSelecionado = prev.find(d => d.id === dependente.id);
@@ -91,13 +115,11 @@ export default function WeddingSite() {
       return;
     }
 
-    // Validar se o nome está na lista de convidados
     if (!nomeValido) {
       alert("Nome não encontrado na lista de convidados. Verifique se digitou corretamente ou entre em contato com os noivos.");
       return;
     }
 
-    // Preparar dados da confirmação
     const dadosConfirmacao = {
       principal: opcao === "Vou comparecer" ? 1 : 0,
       dependentes: {},
@@ -105,12 +127,10 @@ export default function WeddingSite() {
       observacoes: observacoes
     };
 
-    // Marcar dependentes selecionados como 1, não selecionados como 0
     dependentesDisponiveis.forEach(dep => {
       dadosConfirmacao.dependentes[dep.id] = dependentesSelecionados.some(d => d.id === dep.id) ? 1 : 0;
     });
 
-    // Salvar confirmação
     const sucesso = salvarConfirmacao(nomeConvidado, dadosConfirmacao);
     
     if (sucesso) {
@@ -120,14 +140,12 @@ export default function WeddingSite() {
     }
   };
 
-  // Função para fechar modal quando clicar fora
   const handleModalClick = (e) => {
     if (e.target === e.currentTarget) {
       setOpen(false);
     }
   };
 
-  // Função para fechar modal com ESC
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && open) {
@@ -137,7 +155,6 @@ export default function WeddingSite() {
 
     if (open) {
       document.addEventListener('keydown', handleKeyDown);
-      // Prevenir scroll do body quando modal estiver aberta
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'unset';
@@ -183,7 +200,12 @@ export default function WeddingSite() {
       <section className="container grid4">
         {["Dias","Horas","Min","Seg"].map((l,i)=> (
           <div key={l} className="card center">
-            <div className="count">{[42,12,7,19][i]}</div>
+            <div className="count">
+              {l === "Dias" && tempoRestante.dias}
+              {l === "Horas" && tempoRestante.horas}
+              {l === "Min" && tempoRestante.minutos}
+              {l === "Seg" && tempoRestante.segundos}
+            </div>
             <div className="label">{l}</div>
           </div>
         ))}
@@ -205,7 +227,7 @@ export default function WeddingSite() {
           <div className="icard">
             <div className="ico">📅</div>
             <h3 className="h3">Quando</h3>
-            <p className="muted">Sábado, 14 de dezembro de 2025 — 17:00</p>
+            <p className="muted">Terça-feira, 10 de dezembro de 2025 — 17:00</p>
           </div>
           <div className="icard">
             <div className="ico">📍</div>
