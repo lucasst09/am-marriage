@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { obterTodasConfirmacoes, limparTodasConfirmacoes, mockData } from "../data/mockData.js";
 import "../css/weddingSite/WeddingSite.css";
 
-export default function AdminPage() {
+export default function AdminPage({ onAddPhotos, storyPhotos }) {
   const [confirmacoes, setConfirmacoes] = useState({});
   const [senha, setSenha] = useState("");
   const [autenticado, setAutenticado] = useState(false);
@@ -271,6 +271,29 @@ export default function AdminPage() {
           >
             🗑️ Limpar Todas
           </button>
+        </div>
+
+        {/* Novo: gestão da galeria */}
+        <div className="card" style={{ padding: '20px', marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '16px', textAlign: 'center' }}>Galeria de Fotos</h3>
+          <label className="btn">
+            Adicionar fotos
+            <input
+              type="file"
+              accept="image/*"
+              multiple
+              onChange={(e) => onAddPhotos && onAddPhotos(e.target.files)}
+              style={{ display: 'none' }}
+            />
+          </label>
+
+          <div className="gallery-grid" style={{ marginTop: 16 }}>
+            {storyPhotos.map((p, idx) => (
+              <div key={idx} className="gallery-photo-card" style={{ display: 'grid', gap: 8 }}>
+                <img src={p.url} alt={`Foto ${idx + 1}`} style={{ width: '100%', borderRadius: 12 }} />
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="card" style={{ padding: '20px' }}>

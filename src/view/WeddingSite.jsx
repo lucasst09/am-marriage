@@ -4,7 +4,7 @@ import { obterPessoasDisponiveis, verificarConfirmacaoExistente, salvarConfirmac
 import carroImage from "../assets/img/carro.jpg";
 import img1 from "../assets/img/image1.jpg";
 
-export default function WeddingSite() {
+export default function WeddingSite({ onNavigate, storyPhotos }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [dependentesDisponiveis, setDependentesDisponiveis] = useState([]);
@@ -18,6 +18,16 @@ export default function WeddingSite() {
   const [nomeValido, setNomeValido] = useState(false);
   const [tempoRestante, setTempoRestante] = useState({ dias: 590, horas: 0, minutos: 8, segundos: 46 });
   const firstFieldRef = useRef(null);
+  const audioRef = useRef(null);
+  const pixKey = "andre.marilene@email.com";
+  const cotas = [
+    { titulo: "1 noite aconchegante", valor: "R$ 250,00", descricao: "Ajude com a hospedagem" },
+    { titulo: "Jantar romântico", valor: "R$ 180,00", descricao: "Um brinde ao amor!" },
+    { titulo: "Passeio especial", valor: "R$ 120,00", descricao: "Momento inesquecível" },
+    { titulo: "Transporte", valor: "R$ 80,00", descricao: "Para chegar aos destinos" }
+  ];
+  const copyText = (text) => { navigator.clipboard?.writeText(text).catch(() => {}); };
+
 
   const calcularTempoRestante = () => {
     const agora = new Date();
@@ -95,6 +105,20 @@ export default function WeddingSite() {
     if (open && firstFieldRef.current) firstFieldRef.current.focus();
   }, [open]);
 
+  useEffect(() => {
+    const a = audioRef.current;
+    if (!a) return;
+    a.loop = true;
+    a.muted = true;
+    a.volume = 0.25;
+    const play = () => a.play().catch(() => {});
+    const unmuteAndPlay = () => { a.muted = false; play(); };
+    play();
+    const events = ['click','touchstart','pointerdown','keydown'];
+    events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
+    return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
+  }, []);
+
   const toggleDependente = (dependente) => {
     if (jaConfirmado) return;
     
@@ -169,6 +193,7 @@ export default function WeddingSite() {
 
   return (
     <div className="wedding-site">
+      <audio ref={audioRef} src="/ceu-de-santo-amaro.mp3" autoPlay preload="auto" loop playsInline muted />
       {/* Header */}
       <header className="header">
         <div className="container">
@@ -178,7 +203,7 @@ export default function WeddingSite() {
             <a href="#story">História</a>
             <a href="#info">Informações</a>
             <a href="#gallery">Galeria</a>
-            <a href="#gifts">Presentes</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('presentes'); }}>Presentes</a>
           </nav>
           <button className="btn" onClick={() => setOpen(true)}>Confirmar presença</button>
         </div>
@@ -237,7 +262,12 @@ export default function WeddingSite() {
             <div className="leaf-decoration leaf-right">🍃</div>
             <h2 className="story-title">Nossa História</h2>
             <p className="story-text">
-              Nos conhecemos, crescemos e sonhamos lado a lado. No dia 06/12/2025, celebramos com nossa família e amigos tudo aquilo que Deus tem construído em nós.
+              Há 29 anos, André e Marilene se encontraram em um lugar especial: uma escola. Foi ali que nasceu uma amizade sincera, que com o tempo floresceu em amor, companheirismo e sonhos compartilhados.
+              Desde então, viveram juntos inúmeras histórias, superaram desafios e construíram uma linda família. Victor Hugo e Maria Eduarda são parte desse amor que cresceu e se fortaleceu ao longo dos anos 
+              — o maior presente que a vida poderia lhes dar.
+              Em 2006, oficializaram a união no civil, celebrando o que já existia no coração. Hoje, com quatro netos e uma trajetória marcada por fé, cumplicidade e carinho, 
+              André e Marilene se preparam para viver um novo capítulo: no dia 06 de dezembro de 2025, vão celebrar diante de Deus tudo o que construíram juntos.
+              Uma história de amor que floresceu e continua a crescer, com raízes firmes e eternas. 💚
             </p>
           </div>
         </div>
@@ -250,46 +280,41 @@ export default function WeddingSite() {
           <div className="info-cards">
             <div className="info-card">
               <div className="info-icon">📅</div>
-              <h3 className="info-card-title">Cerimônia</h3>
+              <h3 className="info-card-title">Data & Horário</h3>
               <p className="info-card-text">06/12/2025</p>
-              <p className="info-card-text">19 h</p>
+              <p className="info-card-text">18h30</p>
             </div>
             <div className="info-card">
-              <div className="info-icon">📍</div>
-              <h3 className="info-card-title">Local</h3>
-              <p className="info-card-text">[Endereço do evento]</p>
+              <div className="info-icon">⛪</div>
+              <h3 className="info-card-title">Cerimônia</h3>
+              <p className="info-card-text">Paróquia São Bento — QS 305 Conj. 1 Lote 1/4, Samambaia, Brasília - DF</p>
+              <a className="info-card-text" href="https://maps.app.goo.gl/Gfyn22DaurCgcMMUA" target="_blank" rel="noopener noreferrer">Ver no mapa</a>
             </div>
             <div className="info-card">
-              <div className="info-icon">👔</div>
-              <h3 className="info-card-title">Traje</h3>
-              <p className="info-card-text">Esporte fino</p>
+              <div className="info-icon">🎉</div>
+              <h3 className="info-card-title">Recepção</h3>
+              <p className="info-card-text">Salão de Festas – Residencial Rio Paranã — Qd. 301 Conj. 01 Lote 06</p>
+              <a className="info-card-text" href="https://maps.app.goo.gl/wYcSvJMxzDG1p2ca6" target="_blank" rel="noopener noreferrer">Ver no mapa</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Gifts Section */}
-      <section id="gifts" className="gifts-section">
+      {/* Galeria Section */}
+      <section id="gallery" className="gallery-section">
         <div className="container">
-          <div className="gifts-content">
-            <div className="gifts-text">
-              <div className="leaf-decoration leaf-left">🍃</div>
-              <div className="leaf-decoration leaf-right">🍃</div>
-              <h2 className="gifts-title">Presentes</h2>
-              <p className="gifts-description">
-                Sua presença é o melhor presente. Se desejar, confira a lista.
-              </p>
-              <button className="gifts-button">Ver lista de presentes</button>
-            </div>
-            <div className="gifts-gallery">
-              {Array.from({length: 8}).map((_, i) => (
-                <div key={i} className="gallery-item" style={{
-                  backgroundImage: `url(${img1})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }} />
-              ))}
-            </div>
+          <div className="gallery-header">
+            <div className="leaf-decoration">🍃</div>
+            <h2 className="gallery-title">Galeria de Fotos</h2>
+            <p className="gallery-description">Registros especiais da nossa caminhada.</p>
+          </div>
+
+          <div className="gallery-grid" style={{ marginTop: 16 }}>
+            {storyPhotos.map((p, idx) => (
+              <div key={idx} className="gallery-photo-card" style={{ display: 'grid', gap: 8 }}>
+                <img src={p.url} alt={`Foto ${idx + 1}`} style={{ width: '100%', borderRadius: 12 }} />
+              </div>
+            ))}
           </div>
         </div>
       </section>

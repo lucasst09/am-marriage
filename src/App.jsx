@@ -2,14 +2,26 @@ import { useState } from 'react';
 import './App.css';
 import WeddingSite from './view/WeddingSite';
 import AdminPage from './view/AdminPage';
+import GiftsPage from './view/GiftsPage';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [storyPhotos, setStoryPhotos] = useState([]);
+  const addPhotos = (files) => {
+    const arr = Array.from(files || []);
+    const photos = arr.map(f => ({ url: URL.createObjectURL(f) }));
+    setStoryPhotos(prev => [...prev, ...photos]);
+  };
 
   return (
     <>
-      {currentPage === 'home' && <WeddingSite />}
-      {currentPage === 'admin' && <AdminPage />}
+      {currentPage === 'home' && (
+        <WeddingSite onNavigate={setCurrentPage} storyPhotos={storyPhotos} />
+      )}
+      {currentPage === 'presentes' && <GiftsPage onNavigate={setCurrentPage} />}
+      {currentPage === 'admin' && (
+        <AdminPage onAddPhotos={addPhotos} storyPhotos={storyPhotos} />
+      )}
       {currentPage === 'home' && (
         <button
           onClick={() => setCurrentPage('admin')}
