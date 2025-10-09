@@ -319,6 +319,19 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
         </div>
       </section>
 
+      {/* Rodapé */}
+      <footer id="footer" className="footer">
+        <div className="container">
+          <div className="footer-brand">André & Marilene</div>
+          <p className="footer-text">Com carinho, agradecemos sua presença.</p>
+          <div className="footer-links">
+            <a href="#home">Início</a>
+            <a href="#gallery">Galeria</a>
+            <a href="#info">Informações</a>
+          </div>
+        </div>
+      </footer>
+
       {/* Modal */}
       {open && (
         <div className="modal" onClick={handleModalClick}>

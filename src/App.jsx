@@ -13,6 +13,10 @@ function App() {
     setStoryPhotos(prev => [...prev, ...photos]);
   };
 
+  const removePhotoAt = (index) => {
+    setStoryPhotos(prev => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <>
       {currentPage === 'home' && (
@@ -20,7 +24,7 @@ function App() {
       )}
       {currentPage === 'presentes' && <GiftsPage onNavigate={setCurrentPage} />}
       {currentPage === 'admin' && (
-        <AdminPage onAddPhotos={addPhotos} storyPhotos={storyPhotos} />
+        <AdminPage onAddPhotos={addPhotos} onRemovePhoto={removePhotoAt} storyPhotos={storyPhotos} />
       )}
       {currentPage === 'home' && (
         <button

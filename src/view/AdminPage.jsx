@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { obterTodasConfirmacoes, limparTodasConfirmacoes, mockData } from "../data/mockData.js";
 import "../css/weddingSite/WeddingSite.css";
 
-export default function AdminPage({ onAddPhotos, storyPhotos }) {
+export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
   const [confirmacoes, setConfirmacoes] = useState({});
   const [senha, setSenha] = useState("");
   const [autenticado, setAutenticado] = useState(false);
@@ -289,8 +289,23 @@ export default function AdminPage({ onAddPhotos, storyPhotos }) {
 
           <div className="gallery-grid" style={{ marginTop: 16 }}>
             {storyPhotos.map((p, idx) => (
-              <div key={idx} className="gallery-photo-card" style={{ display: 'grid', gap: 8 }}>
-                <img src={p.url} alt={`Foto ${idx + 1}`} style={{ width: '100%', borderRadius: 12 }} />
+              <div key={idx} className="gallery-photo-card" style={{ position: 'relative' }}>
+                <img src={p.url} alt={`Foto ${idx + 1}`} />
+                <button
+                  className="btn"
+                  onClick={() => onRemovePhoto && onRemovePhoto(idx)}
+                  style={{
+                    position: 'absolute',
+                    top: '8px',
+                    right: '8px',
+                    backgroundColor: '#dc3545',
+                    padding: '6px 10px',
+                    fontSize: '12px'
+                  }}
+                  title="Remover esta foto"
+                >
+                  Remover
+                </button>
               </div>
             ))}
           </div>
