@@ -18,8 +18,8 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
   const [nomeValido, setNomeValido] = useState(false);
   const [tempoRestante, setTempoRestante] = useState({ dias: 590, horas: 0, minutos: 8, segundos: 46 });
   const firstFieldRef = useRef(null);
-  const audioRef = useRef(null);
-  const pixKey = "andre.marilene@email.com";
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pixKey = "(61)99868-5446";
   const cotas = [
     { titulo: "1 noite aconchegante", valor: "R$ 250,00", descricao: "Ajude com a hospedagem" },
     { titulo: "Jantar romântico", valor: "R$ 180,00", descricao: "Um brinde ao amor!" },
@@ -106,17 +106,20 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
   }, [open]);
 
   useEffect(() => {
-    const a = audioRef.current;
-    if (!a) return;
-    a.loop = true;
-    a.muted = true;
-    a.volume = 0.25;
-    const play = () => a.play().catch(() => {});
-    const unmuteAndPlay = () => { a.muted = false; play(); };
-    play();
-    const events = ['click','touchstart','pointerdown','keydown'];
-    events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
-    return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
+    // Remova este bloco se existir (useEffect do áudio):
+    // useEffect(() => {
+    //   const a = audioRef.current;
+    //   if (!a) return;
+    //   a.loop = true;
+    //   a.muted = true;
+    //   a.volume = 0.25;
+    //   const play = () => a.play().catch(() => {});
+    //   const unmuteAndPlay = () => { a.muted = false; play(); };
+    //   play();
+    //   const events = ['click','touchstart','pointerdown','keydown'];
+    //   events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
+    //   return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
+    // }, []);
   }, []);
 
   const toggleDependente = (dependente) => {
@@ -193,18 +196,26 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
 
   return (
     <div className="wedding-site">
-      <audio ref={audioRef} src="/ceu-de-santo-amaro.mp3" autoPlay preload="auto" loop playsInline muted />
-      {/* Header */}
       <header className="header">
         <div className="container">
-          <div className="brand">A & M</div>
-          <nav className="nav">
-            <a href="#home">Início</a>
-            <a href="#story">História</a>
-            <a href="#info">Informações</a>
-            <a href="#gallery">Galeria</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('presentes'); }}>Presentes</a>
-          </nav>
+          <div className="header-top">
+            <nav className="nav">
+              <a href="#home">Início</a>
+              <a href="#story">História</a>
+              <a href="#info">Informações</a>
+              <a href="#gallery">Galeria</a>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate && onNavigate('presentes');
+                }}
+              >
+                Presentes
+              </a>
+            </nav>
+          </div>
+
           <button className="btn" onClick={() => setOpen(true)}>Confirmar presença</button>
         </div>
       </header>
@@ -216,7 +227,7 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${img1})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center top',
           backgroundAttachment: 'fixed'
         }}
       >
@@ -262,12 +273,12 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
             <div className="leaf-decoration leaf-right">🍃</div>
             <h2 className="story-title">Nossa História</h2>
             <p className="story-text">
-              Há 29 anos, André e Marilene se encontraram em um lugar especial: uma escola. Foi ali que nasceu uma amizade sincera, que com o tempo floresceu em amor, companheirismo e sonhos compartilhados.
-              Desde então, viveram juntos inúmeras histórias, superaram desafios e construíram uma linda família. Victor Hugo e Maria Eduarda são parte desse amor que cresceu e se fortaleceu ao longo dos anos 
-              — o maior presente que a vida poderia lhes dar.
-              Em 2006, oficializaram a união no civil, celebrando o que já existia no coração. Hoje, com quatro netos e uma trajetória marcada por fé, cumplicidade e carinho, 
-              André e Marilene se preparam para viver um novo capítulo: no dia 06 de dezembro de 2025, vão celebrar diante de Deus tudo o que construíram juntos.
-              Uma história de amor que floresceu e continua a crescer, com raízes firmes e eternas. 💚
+              Há vinte e nove anos, o destino uniu André e Marilene em um cenário cheio de significado: uma escola. O que começou como uma amizade sincera floresceu em um amor profundo — 
+              um amor que se fez companheirismo, respeito e sonhos compartilhados.
+              Desde então, caminharam lado a lado, transformando cada desafio em aprendizado e cada conquista em motivo de gratidão. Juntos, construíram uma linda família: Victor Hugo e 
+              Maria Eduarda, frutos desse amor que cresceu e se fortaleceu com o tempo, tornando-se o maior presente que a vida poderia oferecer.
+              Em 2006, oficializaram no papel aquilo que já vivia em seus corações. Hoje, com quatro netos e uma história marcada pela fé, cumplicidade e ternura, André e Marilene se preparam para um novo e inesquecível capítulo.
+              No dia <strong>06 de dezembro de 2025</strong>, diante de Deus, vão celebrar uma vida inteira de amor — um amor que floresceu, criou raízes e continua a crescer, forte e sereno, como um jardim eterno cultivado com carinho e esperança. 💚
             </p>
           </div>
         </div>
