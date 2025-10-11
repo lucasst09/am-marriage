@@ -177,7 +177,6 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
             <button className="btn full" type="submit">Entrar</button>
           </form>
           <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '12px', color: '#666' }}>
-            Dica: A senha padrão é "admin123"
           </p>
         </div>
       </div>

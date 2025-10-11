@@ -6,7 +6,27 @@ import GiftsPage from './view/GiftsPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
-  const [storyPhotos, setStoryPhotos] = useState([]);
+  const [storyPhotos, setStoryPhotos] = useState([
+    { url: "/01.png" },
+    { url: "/02.png" },
+    { url: "/03.JPG" },
+    { url: "/04.JPG" },
+    { url: "/05.JPG" },
+    { url: "/06.JPG" },
+    { url: "/07.JPG" },
+    { url: "/08.JPG" },
+    { url: "/09.JPG" },
+    { url: "/10.JPG" },
+    { url: "/11.JPG" },
+    { url: "/12.JPG" },
+    { url: "/13.JPG" },
+    { url: "/14.JPG" }, 
+    { url: "/15.JPG" }
+  ]);
+
+  const addManualPhoto = (path) => {
+    setStoryPhotos(prev => [...prev, { url: path }]);
+  };
   const addPhotos = (files) => {
     const arr = Array.from(files || []);
     const photos = arr.map(f => ({ url: URL.createObjectURL(f) }));

@@ -339,6 +339,15 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
             <a href="#home">Início</a>
             <a href="#gallery">Galeria</a>
             <a href="#info">Informações</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate && onNavigate('presentes');
+              }}
+            >
+              Presentes
+            </a>
           </div>
         </div>
       </footer>
