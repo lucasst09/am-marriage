@@ -4,7 +4,7 @@ import { obterPessoasDisponiveis, verificarConfirmacaoExistente, salvarConfirmac
 import carroImage from "../assets/img/carro.jpg";
 import img1 from "../assets/img/image1.jpg";
 
-export default function WeddingSite() {
+export default function WeddingSite({ onNavigate, storyPhotos }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [dependentesDisponiveis, setDependentesDisponiveis] = useState([]);
@@ -18,6 +18,16 @@ export default function WeddingSite() {
   const [nomeValido, setNomeValido] = useState(false);
   const [tempoRestante, setTempoRestante] = useState({ dias: 590, horas: 0, minutos: 8, segundos: 46 });
   const firstFieldRef = useRef(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const pixKey = "(61)99868-5446";
+  const cotas = [
+    { titulo: "1 noite aconchegante", valor: "R$ 250,00", descricao: "Ajude com a hospedagem" },
+    { titulo: "Jantar romântico", valor: "R$ 180,00", descricao: "Um brinde ao amor!" },
+    { titulo: "Passeio especial", valor: "R$ 120,00", descricao: "Momento inesquecível" },
+    { titulo: "Transporte", valor: "R$ 80,00", descricao: "Para chegar aos destinos" }
+  ];
+  const copyText = (text) => { navigator.clipboard?.writeText(text).catch(() => {}); };
+
 
   const calcularTempoRestante = () => {
     const agora = new Date();
@@ -95,6 +105,23 @@ export default function WeddingSite() {
     if (open && firstFieldRef.current) firstFieldRef.current.focus();
   }, [open]);
 
+  useEffect(() => {
+    // Remova este bloco se existir (useEffect do áudio):
+    // useEffect(() => {
+    //   const a = audioRef.current;
+    //   if (!a) return;
+    //   a.loop = true;
+    //   a.muted = true;
+    //   a.volume = 0.25;
+    //   const play = () => a.play().catch(() => {});
+    //   const unmuteAndPlay = () => { a.muted = false; play(); };
+    //   play();
+    //   const events = ['click','touchstart','pointerdown','keydown'];
+    //   events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
+    //   return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
+    // }, []);
+  }, []);
+
   const toggleDependente = (dependente) => {
     if (jaConfirmado) return;
     
@@ -169,17 +196,26 @@ export default function WeddingSite() {
 
   return (
     <div className="wedding-site">
-      {/* Header */}
       <header className="header">
         <div className="container">
-          <div className="brand">A & M</div>
-          <nav className="nav">
-            <a href="#home">Início</a>
-            <a href="#story">História</a>
-            <a href="#info">Informações</a>
-            <a href="#gallery">Galeria</a>
-            <a href="#gifts">Presentes</a>
-          </nav>
+          <div className="header-top">
+            <nav className="nav">
+              <a href="#home">Início</a>
+              <a href="#story">História</a>
+              <a href="#info">Informações</a>
+              <a href="#gallery">Galeria</a>
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate && onNavigate('presentes');
+                }}
+              >
+                Presentes
+              </a>
+            </nav>
+          </div>
+
           <button className="btn" onClick={() => setOpen(true)}>Confirmar presença</button>
         </div>
       </header>
@@ -191,7 +227,7 @@ export default function WeddingSite() {
         style={{
           backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${img1})`,
           backgroundSize: 'cover',
-          backgroundPosition: 'center',
+          backgroundPosition: 'center top',
           backgroundAttachment: 'fixed'
         }}
       >
@@ -237,7 +273,12 @@ export default function WeddingSite() {
             <div className="leaf-decoration leaf-right">🍃</div>
             <h2 className="story-title">Nossa História</h2>
             <p className="story-text">
-              Nos conhecemos, crescemos e sonhamos lado a lado. No dia 06/12/2025, celebramos com nossa família e amigos tudo aquilo que Deus tem construído em nós.
+              Há vinte e nove anos, o destino uniu André e Marilene em um cenário cheio de significado: uma escola. O que começou como uma amizade sincera floresceu em um amor profundo — 
+              um amor que se fez companheirismo, respeito e sonhos compartilhados.
+              Desde então, caminharam lado a lado, transformando cada desafio em aprendizado e cada conquista em motivo de gratidão. Juntos, construíram uma linda família: Victor Hugo e 
+              Maria Eduarda, frutos desse amor que cresceu e se fortaleceu com o tempo, tornando-se o maior presente que a vida poderia oferecer.
+              Em 2006, oficializaram no papel aquilo que já vivia em seus corações. Hoje, com quatro netos e uma história marcada pela fé, cumplicidade e ternura, André e Marilene se preparam para um novo e inesquecível capítulo.
+              No dia <strong>06 de dezembro de 2025</strong>, diante de Deus, vão celebrar uma vida inteira de amor — um amor que floresceu, criou raízes e continua a crescer, forte e sereno, como um jardim eterno cultivado com carinho e esperança. 💚
             </p>
           </div>
         </div>
@@ -250,49 +291,66 @@ export default function WeddingSite() {
           <div className="info-cards">
             <div className="info-card">
               <div className="info-icon">📅</div>
-              <h3 className="info-card-title">Cerimônia</h3>
+              <h3 className="info-card-title">Data & Horário</h3>
               <p className="info-card-text">06/12/2025</p>
-              <p className="info-card-text">19 h</p>
+              <p className="info-card-text">18h30</p>
             </div>
             <div className="info-card">
-              <div className="info-icon">📍</div>
-              <h3 className="info-card-title">Local</h3>
-              <p className="info-card-text">[Endereço do evento]</p>
+              <div className="info-icon">⛪</div>
+              <h3 className="info-card-title">Cerimônia</h3>
+              <p className="info-card-text">Paróquia São Bento — QS 305 Conj. 1 Lote 1/4, Samambaia, Brasília - DF</p>
+              <a className="info-card-text" href="https://maps.app.goo.gl/Gfyn22DaurCgcMMUA" target="_blank" rel="noopener noreferrer">Ver no mapa</a>
             </div>
             <div className="info-card">
-              <div className="info-icon">👔</div>
-              <h3 className="info-card-title">Traje</h3>
-              <p className="info-card-text">Esporte fino</p>
+              <div className="info-icon">🎉</div>
+              <h3 className="info-card-title">Recepção</h3>
+              <p className="info-card-text">Salão de Festas – Residencial Rio Paranã — Qd. 301 Conj. 01 Lote 06</p>
+              <a className="info-card-text" href="https://maps.app.goo.gl/wYcSvJMxzDG1p2ca6" target="_blank" rel="noopener noreferrer">Ver no mapa</a>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Gifts Section */}
-      <section id="gifts" className="gifts-section">
+      {/* Galeria Section */}
+      <section id="gallery" className="gallery-section">
         <div className="container">
-          <div className="gifts-content">
-            <div className="gifts-text">
-              <div className="leaf-decoration leaf-left">🍃</div>
-              <div className="leaf-decoration leaf-right">🍃</div>
-              <h2 className="gifts-title">Presentes</h2>
-              <p className="gifts-description">
-                Sua presença é o melhor presente. Se desejar, confira a lista.
-              </p>
-              <button className="gifts-button">Ver lista de presentes</button>
-            </div>
-            <div className="gifts-gallery">
-              {Array.from({length: 8}).map((_, i) => (
-                <div key={i} className="gallery-item" style={{
-                  backgroundImage: `url(${img1})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center'
-                }} />
-              ))}
-            </div>
+          <div className="gallery-header">
+            <div className="leaf-decoration">🍃</div>
+            <h2 className="gallery-title">Galeria de Fotos</h2>
+            <p className="gallery-description">Registros especiais da nossa caminhada.</p>
+          </div>
+
+          <div className="gallery-grid" style={{ marginTop: 16 }}>
+            {storyPhotos.map((p, idx) => (
+              <div key={idx} className="gallery-photo-card" style={{ display: 'grid', gap: 8 }}>
+                <img src={p.url} alt={`Foto ${idx + 1}`} style={{ width: '100%', borderRadius: 12 }} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Rodapé */}
+      <footer id="footer" className="footer">
+        <div className="container">
+          <div className="footer-brand">André & Marilene</div>
+          <p className="footer-text">Com carinho, agradecemos sua presença.</p>
+          <div className="footer-links">
+            <a href="#home">Início</a>
+            <a href="#gallery">Galeria</a>
+            <a href="#info">Informações</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigate && onNavigate('presentes');
+              }}
+            >
+              Presentes
+            </a>
+          </div>
+        </div>
+      </footer>
 
       {/* Modal */}
       {open && (

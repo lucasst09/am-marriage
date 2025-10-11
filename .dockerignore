@@ -1,19 +1,54 @@
-FROM node:latest AS builder
+# Dependencies
+node_modules
+npm-debug.log*
 
-WORKDIR /app
+# Build outputs
+dist
+build
 
-COPY package*.json ./
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-RUN npm ci --only=production
+# IDE files
+.vscode
+.idea
+*.swp
+*.swo
 
-COPY . .
+# OS files
+.DS_Store
+Thumbs.db
 
-RUN npm run build
+# Git
+.git
+.gitignore
 
-FROM nginx:alpine
+# Docker files
+Dockerfile
+docker-compose.yml
+docker-compose.prod.yml
 
-COPY --from=builder /app/dist /usr/share/nginx/html
+# Documentation
+README.md
+*.md
 
-EXPOSE 80
+# Logs
+logs
+*.log
 
-CMD ["nginx", "-g", "daemon off;"]
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage
+
+# Temporary folders
+tmp
+temp

@@ -1,29 +1,32 @@
 // Mock de dados para simular um banco local
 export const mockData = {
   "andre": {
-    nome: "André",
+    nome: "André Ricardo",
     dependentes: [
-      { id: 1, nome: "Maria", tipo: "dependente" },
       { id: 2, nome: "Marilene", tipo: "dependente" }
     ]
   },
-  "joao": {
-    nome: "João",
+  "victor": {
+    nome: "Victor Hugo",
     dependentes: [
-      { id: 1, nome: "Ana", tipo: "dependente" },
-      { id: 2, nome: "Carlos", tipo: "dependente" },
-      { id: 3, nome: "Sofia", tipo: "dependente" }
+      { id: 1, nome: "Mirian", tipo: "dependente" },
+      { id: 2, nome: "Sophia", tipo: "dependente" },
+      { id: 3, nome: "Laura", tipo: "dependente" }
     ]
   },
-  "maria": {
-    nome: "Maria",
+  "lucas": {
+    nome: "Lucas Torres",
     dependentes: [
-      { id: 1, nome: "Pedro", tipo: "dependente" }
+      { id: 1, nome: "Maria Eduarda", tipo: "dependente" },
+      { id: 1, nome: "João Pedro", tipo: "dependente" }
     ]
   },
-  "carlos": {
-    nome: "Carlos",
-    dependentes: []
+  "wellington": {
+    nome: "Wellington",
+    dependentes: [
+      { id: 1, nome: "Andresina", tipo: "dependente" },
+      { id: 2, nome: "Gabriela", tipo: "dependente" }
+    ] 
   },
   "ana": {
     nome: "Ana",
@@ -32,16 +35,84 @@ export const mockData = {
       { id: 2, nome: "Julia", tipo: "dependente" }
     ]
   },
+  "rafael": {
+    nome: "Rafael",
+    dependentes: [
+      { id: 1, nome: "Aline", tipo: "dependente" },  
+      { id: 2, nome: "Lucas Teles", tipo: "dependente" },
+      { id: 3, nome: "Gabriel", tipo: "dependente" }
+    ]
+  },
+  "riccardo": {
+    nome: "Sofia",
+    dependentes: [
+      { id: 1, nome: "Andréia", tipo: "dependente" },  
+      { id: 2, nome: "Pietro", tipo: "dependente" }
+    ]
+  },
+  "vicente": {
+    nome: "Vicente",
+    dependentes: [
+      { id: 1, nome: "Marli", tipo: "dependente" },  
+      { id: 2, nome: "Arthur", tipo: "dependente" }
+    ]
+  },
   "pedro": {
     nome: "Pedro",
     dependentes: [
       { id: 1, nome: "Fernanda", tipo: "dependente" }
     ]
   },
-  "sofia": {
-    nome: "Sofia",
-    dependentes: []
-  }
+  "sérgio": {
+    nome: "Sérgio",
+    dependentes: [
+      { id: 1, nome: "Claudia", tipo: "dependente" }
+    ]
+  },
+  "félix": {
+    nome: "Félix",
+    dependentes: [
+      { id: 1, nome: "Elidiani", tipo: "dependente" },
+      { id: 2, nome: "Beatriz", tipo: "dependente" }
+    ]
+  },
+  "reginaldo": {
+    nome: "Reginaldo",
+    dependentes: [
+      { id: 1, nome: "Kezinha", tipo: "dependente" },
+      { id: 2, nome: "Luan", tipo: "dependente" }, 
+      { id: 3, nome: "Ana Clara", tipo: "dependente" },
+      { id: 4, nome: "Cida", tipo: "dependente" }
+    ]
+  },
+  "edis": {
+    nome: "Edis",
+    dependentes: [
+      { id: 1, nome: "Claudia", tipo: "dependente" },
+      { id: 2, nome: "Ana Júlia", tipo: "dependente" }
+    ]
+  },
+  "luan": {
+    nome: "Luan",
+    dependentes: [
+      { id: 1, nome: "Natalia", tipo: "dependente" }
+    ]
+  },
+  "wolingston": {
+    nome: "Wolingston",
+    dependentes: [
+      { id: 1, nome: "Sandrelle", tipo: "dependente" }, 
+      { id: 2, nome: "Angélica", tipo: "dependente" },
+      { id: 3, nome: "Yasmin", tipo: "dependente" }
+    ]
+  },
+  "sebastião": {
+    nome: "Sebastião",
+    dependentes: [
+      { id: 1, nome: "Maurina", tipo: "dependente" }
+    
+    ]
+  },
 };
 
 // Chave para armazenar no localStorage
