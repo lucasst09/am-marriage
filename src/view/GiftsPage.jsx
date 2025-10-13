@@ -18,6 +18,13 @@ export default function GiftsPage({ onNavigate }) {
     <div className="wedding-site">
       <header className="header">
         <div className="container">
+          <button
+            className="mobile-home-btn mobile-only"
+            aria-label="Ir para Início"
+            onClick={() => onNavigate && onNavigate('home')}
+          >
+            Início
+          </button>
           <div className="brand">A & M</div>
           <nav className="nav">
             <a href="#" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('home'); }}>Início</a>

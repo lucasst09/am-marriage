@@ -44,7 +44,100 @@ a {
   z-index: 100;
 }
 
-/* Esconder hambúrguer no desktop */
+/* Mobile-only helper */
+.mobile-only { display: none; }
+@media (max-width: 768px) {
+  .mobile-only { display: inline-flex; }
+  .nav { display: none; }
+  .header .nav { display: none !important; }
+  .header .btn { display: none !important; } /* oculta botão do topo */
+  
+  /* Mostrar os 3 botões no herói */
+  .hero-buttons { 
+    display: flex !important; 
+    flex-direction: column; 
+    gap: 12px; 
+    margin-top: 16px; 
+    justify-content: center; 
+  }
+  .hero-buttons .btn {
+    width: 100%; 
+    max-width: 280px; 
+    margin: 0 auto; 
+  }
+  
+  /* Botão "Presentes" abaixo, também visível no mobile */
+  .hero-extra { 
+    display: block !important; 
+    text-align: center; 
+    margin-top: 12px; 
+  }
+  .hero-extra .btn { 
+    width: 100%; 
+    max-width: 280px; 
+    justify-content: center; 
+  }
+}
+
+/* Botão hambúrguer no cabeçalho */
+.hamburger {
+  position: absolute;
+  left: 16px;
+  top: 16px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #F8F4EE;
+  border: 1px solid #EBD9CF;
+  color: #2D5016;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* Botão "Início" no topo direito (apenas mobile) */
+.mobile-home-btn {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #F8F4EE;
+  border: 1px solid #EBD9CF;
+  color: #2D5016;
+  font-size: 14px;
+  line-height: 1;
+}
+
+/* Menu móvel lateral */
+.mobile-menu { position: fixed; inset: 0; z-index: 1000; }
+.mobile-menu-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.35); }
+.mobile-menu-panel {
+  position: absolute;
+  top: 0; bottom: 0; left: 0;
+  width: 76%; max-width: 320px;
+  background: #FFF;
+  box-shadow: 2px 0 12px rgba(0,0,0,0.15);
+  padding: 20px 16px;
+  display: grid; gap: 14px;
+}
+.mobile-menu-panel a,
+.mobile-menu-panel button {
+  font-size: 16px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #2E2A27;
+  background: #F8F4EE;
+  border: 1px solid #EBD9CF;
+}
+.mobile-menu-panel button.btn { background: #2D5016; color: #FFF; border-color: #2D5016; }
+
+/* Botão "Presentes" centralizado abaixo do herói (apenas mobile) */
+.hero-extra { display: none; }
+@media (max-width: 768px) {
+  .hero-extra { display: block; margin-top: 12px; text-align: center; }
+  .hero-extra .btn { width: 100%; max-width: 280px; justify-content: center; }
+}
+
 .header .container {
   display: flex;
   justify-content: space-between;
@@ -728,6 +821,13 @@ img {
   .info-card-text {
     font-size: 11px;
   }
+}
+
+/* Garantias para desktop */
+@media (min-width: 769px) {
+  .nav { display: flex; }
+  .header .btn { display: inline-flex; }
+  .hero-buttons { display: flex; }
 }
 
 /* Responsivo: Mobile */

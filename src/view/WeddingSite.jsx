@@ -199,6 +199,14 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
       <header className="header">
         <div className="container">
           <div className="header-top">
+            {/* Botão hambúrguer à esquerda (mobile-only) */}
+            <button
+              className="hamburger mobile-only"
+              aria-label="Abrir menu"
+              onClick={() => setMenuOpen(true)}
+            >
+              ☰
+            </button>
             <nav className="nav">
               <a href="#home">Início</a>
               <a href="#story">História</a>
@@ -220,6 +228,32 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
         </div>
       </header>
 
+      {/* Menu móvel (painel da esquerda) */}
+      {menuOpen && (
+        <aside className="mobile-menu">
+          <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)} />
+          <div className="mobile-menu-panel">
+            <a href="#home" onClick={() => setMenuOpen(false)}>Início</a>
+            <a href="#story" onClick={() => setMenuOpen(false)}>História</a>
+            <a href="#info" onClick={() => setMenuOpen(false)}>Informações</a>
+            <a href="#gallery" onClick={() => setMenuOpen(false)}>Galeria</a>
+            <a
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                setMenuOpen(false);
+                onNavigate && onNavigate('presentes');
+              }}
+            >
+              Presentes
+            </a>
+            <button className="btn" onClick={() => { setMenuOpen(false); setOpen(true); }}>
+              Confirmar presença
+            </button>
+          </div>
+        </aside>
+      )}
+
       {/* Hero Section */}
       <section 
         id="home" 
@@ -237,6 +271,9 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
           <div className="hero-buttons">
             <button className="btn" onClick={() => setOpen(true)}>Confirmar Presença</button>
             <a href="#info" className="btn ghost">Ver Detalhes</a>
+          </div>
+          <div className="hero-extra mobile-only">
+            <button className="btn" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('presentes'); }}>Presentes</button>
           </div>
         </div>
       </section>
@@ -335,20 +372,8 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
         <div className="container">
           <div className="footer-brand">André & Marilene</div>
           <p className="footer-text">Com carinho, agradecemos sua presença.</p>
-          <div className="footer-links">
-            <a href="#home">Início</a>
-            <a href="#gallery">Galeria</a>
-            <a href="#info">Informações</a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate && onNavigate('presentes');
-              }}
-            >
-              Presentes
-            </a>
-          </div>
+          {/* Removidos os botões do rodapé */}
+          <div className="footer-links"></div>
         </div>
       </footer>
 
