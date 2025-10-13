@@ -160,6 +160,20 @@ export const mockData = {
       { id: 4, nome: "Alice", tipo: "dependente" }
     ]
   },
+  "alessandra martins": {
+    nome: "Alessandra Martins",
+    dependentes: [
+      { id: 1, nome: "Alessandra Martins", tipo: "dependente" },
+      { id: 2, nome: "Karen", tipo: "dependente" }
+    ]
+  },
+  "osorio": {
+    nome: "Osorio",
+    dependentes: [
+      { id: 1, nome: "Osorio", tipo: "dependente" },
+      { id: 2, nome: "Vania", tipo: "dependente" }
+    ]
+  },
 };
 
 // Chave para armazenar no localStorage
