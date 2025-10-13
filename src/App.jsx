@@ -17,7 +17,7 @@ export default function App() {
     { url: "/08.JPG" },
     { url: "/09.JPG" },
     { url: "/10.JPG" },
-    { url: "/11.JPG" },
+    { url: "/11.png" },
     { url: "/12.JPG" },
     { url: "/13.JPG" },
     { url: "/14.JPG" }, 
