@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import "../css/weddingSite/WeddingSite.css";
 import { obterPessoasDisponiveis, verificarConfirmacaoExistente, salvarConfirmacao } from "../data/mockData.js";
-import carroImage from "../assets/img/carro.jpg";
 import img1 from "../assets/img/image1.jpg";
+import WeddingMenu from "../components/WeddingMenu.jsx";
 
 export default function WeddingSite({ onNavigate, storyPhotos }) {
   const [open, setOpen] = useState(false);
@@ -105,23 +105,6 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
     if (open && firstFieldRef.current) firstFieldRef.current.focus();
   }, [open]);
 
-  useEffect(() => {
-    // Remova este bloco se existir (useEffect do áudio):
-    // useEffect(() => {
-    //   const a = audioRef.current;
-    //   if (!a) return;
-    //   a.loop = true;
-    //   a.muted = true;
-    //   a.volume = 0.25;
-    //   const play = () => a.play().catch(() => {});
-    //   const unmuteAndPlay = () => { a.muted = false; play(); };
-    //   play();
-    //   const events = ['click','touchstart','pointerdown','keydown'];
-    //   events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
-    //   return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
-    // }, []);
-  }, []);
-
   const toggleDependente = (dependente) => {
     if (jaConfirmado) return;
     
@@ -199,7 +182,6 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
       <header className="header">
         <div className="container">
           <div className="header-top">
-            {/* Botão hambúrguer à esquerda (mobile-only) */}
             <button
               className="hamburger mobile-only"
               aria-label="Abrir menu"
@@ -227,32 +209,12 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
           <button className="btn" onClick={() => setOpen(true)}>Confirmar presença</button>
         </div>
       </header>
-
-      {/* Menu móvel (painel da esquerda) */}
-      {menuOpen && (
-        <aside className="mobile-menu">
-          <div className="mobile-menu-backdrop" onClick={() => setMenuOpen(false)} />
-          <div className="mobile-menu-panel">
-            <a href="#home" onClick={() => setMenuOpen(false)}>Início</a>
-            <a href="#story" onClick={() => setMenuOpen(false)}>História</a>
-            <a href="#info" onClick={() => setMenuOpen(false)}>Informações</a>
-            <a href="#gallery" onClick={() => setMenuOpen(false)}>Galeria</a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                setMenuOpen(false);
-                onNavigate && onNavigate('presentes');
-              }}
-            >
-              Presentes
-            </a>
-            <button className="btn" onClick={() => { setMenuOpen(false); setOpen(true); }}>
-              Confirmar presença
-            </button>
-          </div>
-        </aside>
-      )}
+      <WeddingMenu 
+        open={menuOpen} 
+        onClose={() => setMenuOpen(false)}
+        onNavigate={onNavigate}
+        onConfirmPresence={() => setOpen(true)}
+      />
 
       {/* Hero Section */}
       <section 
