@@ -10,12 +10,12 @@ export class GetAllConfirmationsUseCase {
 
   /**
    * Executa o caso de uso
-   * @returns {Object} Resultado da operação
+   * @returns {Promise<Object>} Resultado da operação
    */
-  execute() {
+  async execute() {
     try {
-      const confirmations = this.confirmationRepository.getAll();
-      const statistics = this.confirmationRepository.getStatistics();
+      const confirmations = await this.confirmationRepository.getAll();
+      const statistics = await this.confirmationRepository.getStatistics();
 
       return {
         success: true,

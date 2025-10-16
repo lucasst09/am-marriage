@@ -6,11 +6,13 @@ services:
     container_name: ammarriage-prod
     restart: unless-stopped
     ports:
-      - "80:80"
+      - "80:80"      # Nginx (frontend + proxy para API)
     environment:
       - NODE_ENV=production
+    volumes:
+      - ./data:/app/data  # Persistir dados de confirmações
     healthcheck:
-      test: ["CMD", "nginx", "-t"]
+      test: ["CMD", "curl", "-f", "http://localhost/api/confirmations/stats"]
       interval: 30s
       timeout: 10s
       retries: 3

@@ -1,67 +1,81 @@
-import { 
-  obterConfirmacoesDoStorage, 
-  salvarConfirmacoesNoStorage, 
-  limparTodasConfirmacoes 
-} from '../../data/mockData.js';
 import { Confirmation } from '../../domain/entities/Confirmation.js';
 
 /**
  * Repositório para gerenciar confirmações de presença
- * Implementa a interface de acesso aos dados de confirmação
+ * Implementa a interface de acesso aos dados de confirmação via API
  */
 export class ConfirmationRepository {
   constructor() {
-    this.storageKey = 'amMarriage_confirmacoes';
+    // Usa a URL da API baseada no ambiente
+    this.apiBaseUrl = process.env.NODE_ENV === 'production' 
+      ? '/api'  // Em produção, usa a mesma origem
+      : 'http://localhost:3001/api';  // Em desenvolvimento, usa localhost
   }
 
   /**
    * Obtém uma confirmação pelo nome do convidado
    */
-  findByGuestName(guestName) {
-    const normalizedName = guestName.toLowerCase().trim();
-    const confirmacoes = this._getAllConfirmations();
-    const rawData = confirmacoes[normalizedName];
-    
-    if (!rawData) {
+  async findByGuestName(guestName) {
+    try {
+      const normalizedName = guestName.toLowerCase().trim();
+      const response = await fetch(`${this.apiBaseUrl}/confirmations/${encodeURIComponent(normalizedName)}`);
+      const result = await response.json();
+      
+      if (result.success && result.data) {
+        return Confirmation.fromRawData(result.data);
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Erro ao buscar confirmação:', error);
       return null;
     }
-    
-    return Confirmation.fromRawData({
-      guestName: normalizedName,
-      ...rawData
-    });
   }
 
   /**
    * Salva uma confirmação
    */
-  save(confirmation) {
-    const confirmacoes = this._getAllConfirmations();
-    const normalizedName = confirmation.guestName.toLowerCase().trim();
-    
-    confirmacoes[normalizedName] = confirmation.toObject();
-    
-    return this._saveAllConfirmations(confirmacoes);
+  async save(confirmation) {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/confirmations`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(confirmation.toObject())
+      });
+      
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Erro ao salvar confirmação:', error);
+      return false;
+    }
   }
 
   /**
    * Obtém todas as confirmações
    */
-  getAll() {
+  async getAll() {
     try {
-      const confirmacoes = this._getAllConfirmations();
+      const response = await fetch(`${this.apiBaseUrl}/confirmations`);
+      const result = await response.json();
       
-      return Object.entries(confirmacoes).map(([guestName, rawData]) => {
-        try {
-          return Confirmation.fromRawData({
-            guestName,
-            ...rawData
-          });
-        } catch (error) {
-          console.error(`Erro ao processar confirmação para ${guestName}:`, error);
-          return null;
-        }
-      }).filter(confirmation => confirmation !== null);
+      if (result.success && result.data) {
+        return Object.entries(result.data).map(([guestName, rawData]) => {
+          try {
+            return Confirmation.fromRawData({
+              guestName,
+              ...rawData
+            });
+          } catch (error) {
+            console.error(`Erro ao processar confirmação para ${guestName}:`, error);
+            return null;
+          }
+        }).filter(confirmation => confirmation !== null);
+      }
+      
+      return [];
     } catch (error) {
       console.error('Erro ao obter confirmações:', error);
       return [];
@@ -71,43 +85,68 @@ export class ConfirmationRepository {
   /**
    * Verifica se existe confirmação para um convidado
    */
-  exists(guestName) {
-    const normalizedName = guestName.toLowerCase().trim();
-    const confirmacoes = this._getAllConfirmations();
-    return !!confirmacoes[normalizedName];
+  async exists(guestName) {
+    try {
+      const normalizedName = guestName.toLowerCase().trim();
+      const response = await fetch(`${this.apiBaseUrl}/confirmations/${encodeURIComponent(normalizedName)}/exists`);
+      const result = await response.json();
+      
+      return result.success && result.exists;
+    } catch (error) {
+      console.error('Erro ao verificar existência da confirmação:', error);
+      return false;
+    }
   }
 
   /**
    * Remove uma confirmação específica
    */
-  delete(guestName) {
-    const confirmacoes = this._getAllConfirmations();
-    const normalizedName = guestName.toLowerCase().trim();
-    
-    if (confirmacoes[normalizedName]) {
-      delete confirmacoes[normalizedName];
-      return this._saveAllConfirmations(confirmacoes);
+  async delete(guestName) {
+    try {
+      const normalizedName = guestName.toLowerCase().trim();
+      const response = await fetch(`${this.apiBaseUrl}/confirmations/${encodeURIComponent(normalizedName)}`, {
+        method: 'DELETE'
+      });
+      
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Erro ao deletar confirmação:', error);
+      return false;
     }
-    
-    return false;
   }
 
   /**
    * Remove todas as confirmações
    */
-  deleteAll() {
-    return limparTodasConfirmacoes();
+  async deleteAll() {
+    try {
+      const response = await fetch(`${this.apiBaseUrl}/confirmations`, {
+        method: 'DELETE'
+      });
+      
+      const result = await response.json();
+      return result.success;
+    } catch (error) {
+      console.error('Erro ao limpar confirmações:', error);
+      return false;
+    }
   }
 
   /**
    * Obtém estatísticas das confirmações
    */
-  getStatistics() {
+  async getStatistics() {
     try {
-      const confirmacoes = this.getAll();
+      const response = await fetch(`${this.apiBaseUrl}/confirmations/stats`);
+      const result = await response.json();
       
-      const stats = {
-        totalConfirmations: confirmacoes.length,
+      if (result.success && result.data) {
+        return result.data;
+      }
+      
+      return {
+        totalConfirmations: 0,
         totalAttending: 0,
         totalNotAttending: 0,
         mainGuestsAttending: 0,
@@ -117,35 +156,8 @@ export class ConfirmationRepository {
         confirmationsWithPhone: 0,
         confirmationsWithObservations: 0
       };
-
-    confirmacoes.forEach(confirmation => {
-      const attendingCount = confirmation.getTotalAttendingCount();
-      const notAttendingCount = confirmation.getTotalCount() - attendingCount;
-      
-      stats.totalAttending += attendingCount;
-      stats.totalNotAttending += notAttendingCount;
-      
-      if (confirmation.isMainGuestAttending()) {
-        stats.mainGuestsAttending++;
-      } else {
-        stats.mainGuestsNotAttending++;
-      }
-      
-      stats.dependentsAttending += confirmation.getAttendingDependentsCount();
-      stats.dependentsNotAttending += confirmation.getDependents().length - confirmation.getAttendingDependentsCount();
-      
-      if (confirmation.telefone && confirmation.telefone.trim()) {
-        stats.confirmationsWithPhone++;
-      }
-      
-      if (confirmation.observacoes && confirmation.observacoes.trim()) {
-        stats.confirmationsWithObservations++;
-      }
-    });
-
-    return stats;
     } catch (error) {
-      console.error('Erro ao calcular estatísticas:', error);
+      console.error('Erro ao obter estatísticas:', error);
       return {
         totalConfirmations: 0,
         totalAttending: 0,
@@ -160,29 +172,4 @@ export class ConfirmationRepository {
     }
   }
 
-  /**
-   * Método privado para obter todas as confirmações do storage
-   */
-  _getAllConfirmations() {
-    try {
-      const confirmacoes = localStorage.getItem(this.storageKey);
-      return confirmacoes ? JSON.parse(confirmacoes) : {};
-    } catch (error) {
-      console.error('Erro ao ler confirmações do localStorage:', error);
-      return {};
-    }
-  }
-
-  /**
-   * Método privado para salvar todas as confirmações no storage
-   */
-  _saveAllConfirmations(confirmacoes) {
-    try {
-      localStorage.setItem(this.storageKey, JSON.stringify(confirmacoes));
-      return true;
-    } catch (error) {
-      console.error('Erro ao salvar confirmações no localStorage:', error);
-      return false;
-    }
-  }
 }

@@ -1,121 +1,52 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
-import { AdminLoginUseCase } from '../useCases/AdminLoginUseCase.js';
+import { useState, useCallback } from 'react';
 import { GetAllConfirmationsUseCase } from '../useCases/GetAllConfirmationsUseCase.js';
-import { GetAdminStatisticsUseCase } from '../useCases/GetAdminStatisticsUseCase.js';
-import { ExportToPDFUseCase } from '../useCases/ExportToPDFUseCase.js';
 import { ConfirmationRepository } from '../../infrastructure/repositories/ConfirmationRepository.js';
 
 /**
  * Hook customizado para gerenciar o painel administrativo
  */
 export function useAdminPanel() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const [confirmations, setConfirmations] = useState([]);
-  const [statistics, setStatistics] = useState(null);
+  const [confirmacoes, setConfirmacoes] = useState({});
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Instâncias dos casos de uso (criadas uma vez)
-  const adminLoginUseCase = useMemo(() => new AdminLoginUseCase(), []);
-  const getAllConfirmationsUseCase = useMemo(() => new GetAllConfirmationsUseCase(), []);
-  const getAdminStatisticsUseCase = useMemo(() => new GetAdminStatisticsUseCase(), []);
-  const confirmationRepository = useMemo(() => new ConfirmationRepository(), []);
+  // Instância do caso de uso
+  const getAllConfirmationsUseCase = new GetAllConfirmationsUseCase();
 
   /**
-   * Carrega confirmações e estatísticas quando autenticado
+   * Carrega todas as confirmações do servidor
    */
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadData();
-    }
-  }, [isAuthenticated]);
-
-  /**
-   * Carrega dados administrativos
-   */
-  const loadData = useCallback(async () => {
+  const carregarConfirmacoes = useCallback(async () => {
+    console.log('Iniciando carregamento de confirmações...');
     setLoading(true);
     setError(null);
 
     try {
-      // Carregar confirmações
-      const confirmationsResult = getAllConfirmationsUseCase.execute();
+      const result = await getAllConfirmationsUseCase.execute();
+      console.log('Resultado da API:', result);
       
-      if (confirmationsResult.success) {
-        setConfirmations(confirmationsResult.data.confirmations);
-        setStatistics(confirmationsResult.data.statistics);
+      if (result.success && result.data) {
+        // Converte as confirmações para o formato esperado pelo admin
+        const confirmacoesFormatadas = {};
+        result.data.confirmations.forEach(confirmation => {
+          confirmacoesFormatadas[confirmation.guestName] = {
+            principal: confirmation.principal,
+            dependentes: confirmation.dependentes,
+            telefone: confirmation.telefone,
+            observacoes: confirmation.observacoes,
+            dataConfirmacao: confirmation.dataConfirmacao
+          };
+        });
+        
+        console.log('Confirmações formatadas:', confirmacoesFormatadas);
+        setConfirmacoes(confirmacoesFormatadas);
       } else {
-        setError(confirmationsResult.error);
-      }
-
-      // Carregar estatísticas detalhadas
-      const statsResult = getAdminStatisticsUseCase.execute();
-      if (statsResult.success) {
-        setStatistics(statsResult.data);
+        console.error('Erro na resposta da API:', result.error);
+        setError(result.error || 'Erro ao carregar confirmações');
       }
     } catch (err) {
-      setError('Erro ao carregar dados administrativos');
-    } finally {
-      setLoading(false);
-    }
-  }, [getAllConfirmationsUseCase, getAdminStatisticsUseCase]);
-
-  /**
-   * Executa login administrativo
-   */
-  const handleLogin = useCallback(async (e) => {
-    e.preventDefault();
-    
-    setLoading(true);
-    setError(null);
-
-    try {
-      const result = adminLoginUseCase.execute(password);
-      
-      if (result.success) {
-        setIsAuthenticated(true);
-        setPassword('');
-        setShowPassword(false);
-      } else {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError('Erro no login');
-    } finally {
-      setLoading(false);
-    }
-  }, [password]);
-
-  /**
-   * Executa logout
-   */
-  const handleLogout = useCallback(() => {
-    setIsAuthenticated(false);
-    setPassword('');
-    setShowPassword(false);
-    setConfirmations([]);
-    setStatistics(null);
-    setError(null);
-  }, []);
-
-  /**
-   * Exporta dados para PDF
-   */
-  const exportToPDF = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-
-    try {
-      const exportUseCase = new ExportToPDFUseCase(confirmationRepository);
-      const result = await exportUseCase.execute();
-      
-      if (!result.success) {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError('Erro ao exportar PDF');
+      console.error('Erro ao carregar confirmações:', err);
+      setError('Erro de conexão com o servidor');
     } finally {
       setLoading(false);
     }
@@ -124,51 +55,41 @@ export function useAdminPanel() {
   /**
    * Limpa todas as confirmações
    */
-  const clearAllConfirmations = useCallback(() => {
-    if (window.confirm('Tem certeza que deseja limpar todas as confirmações? Esta ação não pode ser desfeita!')) {
-      const success = confirmationRepository.deleteAll();
+  const limparConfirmacoes = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const confirmationRepository = new ConfirmationRepository();
+      const success = await confirmationRepository.deleteAll();
       
       if (success) {
-        setConfirmations([]);
-        setStatistics(null);
-        alert('Todas as confirmações foram limpas!');
+        setConfirmacoes({});
+        return { success: true, message: 'Todas as confirmações foram removidas' };
       } else {
         setError('Erro ao limpar confirmações');
+        return { success: false, error: 'Erro ao limpar confirmações' };
       }
+    } catch (err) {
+      const errorMsg = 'Erro de conexão com o servidor';
+      setError(errorMsg);
+      return { success: false, error: errorMsg };
+    } finally {
+      setLoading(false);
     }
   }, []);
 
-  /**
-   * Atualiza a lista de confirmações
-   */
-  const refreshData = useCallback(() => {
-    loadData();
-  }, [loadData]);
-
   return {
     // Estado
-    isAuthenticated,
-    password,
-    showPassword,
-    confirmations,
-    statistics,
+    confirmacoes,
     loading,
     error,
     
     // Ações
-    setPassword,
-    setShowPassword,
-    handleLogin,
-    handleLogout,
-    exportToPDF,
-    clearAllConfirmations,
-    refreshData,
+    carregarConfirmacoes,
+    limparConfirmacoes,
     
     // Computed
-    hasConfirmations: confirmations.length > 0,
-    totalConfirmations: confirmations.length,
-    totalGoing: statistics?.totalAttending || 0,
-    totalNotGoing: statistics?.totalNotAttending || 0,
-    totalDependents: statistics?.dependentsAttending || 0
+    totalConfirmacoes: Object.keys(confirmacoes).length
   };
 }

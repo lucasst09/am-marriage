@@ -21,9 +21,9 @@ export class SaveConfirmationUseCase {
    * @param {Object} params.guestConfirmations - Confirmações por ID do convidado
    * @param {string} params.telefone - Telefone do convidado
    * @param {string} params.observacoes - Observações
-   * @returns {Object} Resultado da operação
+   * @returns {Promise<Object>} Resultado da operação
    */
-  execute({ guestName, guestConfirmations, telefone, observacoes }) {
+  async execute({ guestName, guestConfirmations, telefone, observacoes }) {
     try {
       // Validações
       if (!guestName || typeof guestName !== 'string') {
@@ -53,7 +53,7 @@ export class SaveConfirmationUseCase {
       }
 
       // Verifica se já existe confirmação
-      if (this.confirmationRepository.exists(guestName)) {
+      if (await this.confirmationRepository.exists(guestName)) {
         return {
           success: false,
           error: 'Já existe uma confirmação para este convidado',
@@ -75,7 +75,7 @@ export class SaveConfirmationUseCase {
       );
 
       // Salva a confirmação
-      const saved = this.confirmationRepository.save(confirmation);
+      const saved = await this.confirmationRepository.save(confirmation);
       
       if (!saved) {
         return {

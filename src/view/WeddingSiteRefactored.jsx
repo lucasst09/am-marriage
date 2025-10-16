@@ -37,7 +37,11 @@ export default function WeddingSiteRefactored({ onNavigate, storyPhotos }) {
     observacoes,
     loading,
     error,
+    sugestoes,
+    nomeDigitado,
     searchGuest,
+    searchSuggestions,
+    selectSuggestion,
     updateGuestConfirmation,
     saveConfirmation,
     setTelefone,
@@ -97,7 +101,7 @@ export default function WeddingSiteRefactored({ onNavigate, storyPhotos }) {
 
   const handleGuestSearch = (guestName) => {
     setCurrentGuestName(guestName);
-    searchGuest(guestName);
+    searchSuggestions(guestName);
   };
 
   const handleSaveConfirmation = async () => {
@@ -183,6 +187,9 @@ export default function WeddingSiteRefactored({ onNavigate, storyPhotos }) {
         onObservacoesChange={setObservacoes}
         onSave={handleSaveConfirmation}
         onGuestSearch={handleGuestSearch}
+        sugestoes={sugestoes}
+        onSugestaoSelecionada={selectSuggestion}
+        nomeDigitado={nomeDigitado}
       />
 
       <ConfirmationSuccessModal

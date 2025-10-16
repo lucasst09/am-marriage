@@ -20,7 +20,10 @@ export function ConfirmationModal({
   onTelefoneChange,
   onObservacoesChange,
   onSave,
-  onGuestSearch
+  onGuestSearch,
+  sugestoes = [],
+  onSugestaoSelecionada,
+  nomeDigitado = ""
 }) {
   if (!isOpen) return null;
 
@@ -58,11 +61,12 @@ export function ConfirmationModal({
         )}
 
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
+          <div className="form-group" style={{ position: 'relative' }}>
             <label className="form-label">Seu nome</label>
             <input 
               className="form-input" 
-              placeholder="Digite seu nome (ex: André, João, Maria, Carlos)" 
+              placeholder="Digite e selecione o nome principal que está no seu convite" 
+              value={nomeDigitado}
               onChange={(e) => onGuestSearch(e.target.value)}
               required 
               disabled={confirmation}
@@ -70,8 +74,47 @@ export function ConfirmationModal({
                 borderColor: error ? '#dc3545' : undefined
               }}
             />
+            
+            {/* Lista de sugestões */}
+            {sugestoes.length > 0 && !guestGroup && !confirmation && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                right: 0,
+                backgroundColor: 'white',
+                border: '1px solid #EBD9CF',
+                borderRadius: '8px',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+                zIndex: 1000,
+                maxHeight: '200px',
+                overflowY: 'auto'
+              }}>
+                {sugestoes.map((sugestao, index) => (
+                  <div
+                    key={index}
+                    onClick={() => onSugestaoSelecionada && onSugestaoSelecionada(sugestao)}
+                    style={{
+                      padding: '12px 16px',
+                      cursor: 'pointer',
+                      borderBottom: index < sugestoes.length - 1 ? '1px solid #F0F0F0' : 'none',
+                      fontSize: '14px',
+                      color: '#2E2A27',
+                      transition: 'background-color 0.2s'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#F8F4EE'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = 'transparent'}
+                  >
+                    {sugestao.display}
+                  </div>
+                ))}
+              </div>
+            )}
+            
+            <span style={{ fontSize: '15px', color: '#878720', marginTop: '8px', textAlign: 'center' }}>
+              Após selecionar  o nome principal do convite, os demais familiares aparecerão abaixo para confirmar presença 🌾
+            </span>
           </div>
-          
           {error && (
             <div style={{
               padding: '12px',
@@ -199,7 +242,7 @@ export function ConfirmationModal({
             marginTop: '8px',
             textAlign: 'center'
           }}>
-            Dica: digite seu nome para ver todas as pessoas do seu grupo.
+            Os demais convidados serão listados abaixo para confirmação de presença.
           </p>
         </form>
       </div>

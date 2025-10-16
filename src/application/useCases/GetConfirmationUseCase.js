@@ -11,9 +11,9 @@ export class GetConfirmationUseCase {
   /**
    * Executa o caso de uso
    * @param {string} guestName - Nome do convidado
-   * @returns {Object} Resultado da operação
+   * @returns {Promise<Object>} Resultado da operação
    */
-  execute(guestName) {
+  async execute(guestName) {
     try {
       if (!guestName || typeof guestName !== 'string') {
         return {
@@ -23,7 +23,7 @@ export class GetConfirmationUseCase {
         };
       }
 
-      const confirmation = this.confirmationRepository.findByGuestName(guestName);
+      const confirmation = await this.confirmationRepository.findByGuestName(guestName);
       
       return {
         success: true,

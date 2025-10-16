@@ -14,7 +14,7 @@ export const mockData = {
       { id: 3, nome: "Laura", tipo: "dependente" }
     ]
   },
-  "lucas": {
+  "lucas torres": {
     nome: "Lucas Torres",
     dependentes: [
       { id: 1, nome: "Maria Eduarda", tipo: "dependente" },
@@ -100,17 +100,16 @@ export const mockData = {
       { id: 3, nome: "Yasmin", tipo: "dependente" }
     ]
   },
-  "sebastião": {
+  "sebastião oliveira": {
     nome: "Sebastião",
     dependentes: [
       { id: 1, nome: "Maurina", tipo: "dependente" }
     
     ]
   },
-  "josé guilherme": {
+  "jose guilherme": {
     nome: "José Guilherme",
     dependentes: [
-      { id: 1, nome: "José Guilherme", tipo: "dependente" }
     ]
   },
   "wilson ribeiro": {
@@ -124,15 +123,17 @@ export const mockData = {
     dependentes: [
       { id: 1, nome: "Ione", tipo: "dependente" },
       { id: 2, nome: "Marcos", tipo: "dependente" },
-      { id: 3, nome: "Lurya", tipo: "dependente" }
+      { id: 3, nome: "Luria", tipo: "dependente" },
+      { id: 4, nome: "Pietro", tipo: "dependente" }
     ]
   },
-  "lucas rossete": {
-    nome: "Lucas Rossete",
+  "lucas rosette": {
+    nome: "Lucas Rosette",
     dependentes: [
       { id: 1, nome: "Tamires", tipo: "dependente" },
       { id: 2, nome: "Ana Luiza", tipo: "dependente" },
-      { id: 3, nome: "Alice", tipo: "dependente" }
+      { id: 3, nome: "Alice", tipo: "dependente" },
+      { id: 4, nome: "Miguel", tipo: "dependente" }
     ]
   },
   "alessandra martins": {
@@ -141,8 +142,8 @@ export const mockData = {
       { id: 1, nome: "Karen", tipo: "dependente" }
     ]
   },
-  "osorio": {
-    nome: "Osorio",
+  "osório": {
+    nome: "Osório",
     dependentes: [
       { id: 1, nome: "Vania", tipo: "dependente" }
     ]
@@ -150,19 +151,57 @@ export const mockData = {
   "divino": {
     nome: "Divino",
     dependentes: [
-      { id: 1, nome: "Valquiria", tipo: "dependente" }
+      { id: 1, nome: "Walquíria", tipo: "dependente" }
     ]
   },
-  "sebastião": {
+  "sebastião ramos": {
     nome: "Sebastião Ramos",
     dependentes: [
-      { id: 1, nome: "Sebastião Ramos", tipo: "dependente" }
     ]
   },
 };
 
 // Chave para armazenar no localStorage
 const CONFIRMACOES_KEY = 'amMarriage_confirmacoes';
+
+// Função para remover acentos
+const removerAcentos = (texto) => {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+};
+
+// Função para buscar sugestões de nomes
+export const buscarSugestoes = (termo) => {
+  if (!termo || termo.length < 2) {
+    return [];
+  }
+  
+  const termoNormalizado = removerAcentos(termo);
+  const sugestoes = [];
+  
+  for (const [chave, dados] of Object.entries(mockData)) {
+    const chaveNormalizada = removerAcentos(chave);
+    const nomeNormalizado = removerAcentos(dados.nome);
+    
+    // Verifica se o termo está contido na chave ou no nome
+    if (chaveNormalizada.includes(termoNormalizado) || nomeNormalizado.includes(termoNormalizado)) {
+      sugestoes.push({
+        chave: chave,
+        nome: dados.nome,
+        display: dados.nome // Nome que será exibido na sugestão
+      });
+    }
+  }
+  
+  // Remove duplicatas e limita a 5 sugestões
+  const sugestoesUnicas = sugestoes.filter((sugestao, index, self) => 
+    index === self.findIndex(s => s.chave === sugestao.chave)
+  ).slice(0, 5);
+  
+  return sugestoesUnicas;
+};
 
 // Função para obter confirmações do localStorage
 export const obterConfirmacoesDoStorage = () => {
