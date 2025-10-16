@@ -8,7 +8,7 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
   const [autenticado, setAutenticado] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
-  const SENHA_ADMIN = "admin123";
+  const SENHA_ADMIN = "004Rg~";
 
   useEffect(() => {
     if (autenticado) {
