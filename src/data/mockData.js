@@ -119,12 +119,6 @@ export const mockData = {
       { id: 1, nome: "Maria Abadia", tipo: "dependente" }
     ]
   },
-  "marli": {
-    nome: "Marli",
-    dependentes: [
-      { id: 1, nome: "João Paulo", tipo: "dependente" }
-    ]
-  },
   "alex": {
     nome: "Alex",
     dependentes: [
@@ -151,6 +145,18 @@ export const mockData = {
     nome: "Osorio",
     dependentes: [
       { id: 1, nome: "Vania", tipo: "dependente" }
+    ]
+  },
+  "divino": {
+    nome: "Divino",
+    dependentes: [
+      { id: 1, nome: "Valquiria", tipo: "dependente" }
+    ]
+  },
+  "sebastião": {
+    nome: "Sebastião Ramos",
+    dependentes: [
+      { id: 1, nome: "Sebastião Ramos", tipo: "dependente" }
     ]
   },
 };
