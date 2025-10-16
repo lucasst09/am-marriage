@@ -3,8 +3,7 @@ export const mockData = {
   "andre": {
     nome: "André Ricardo",
     dependentes: [
-      { id: 1, nome: "Marilene"
-        , tipo: "dependente" }
+      { id: 1, nome: "Marilene", tipo: "dependente" }
     ]
   },
   "victor": {
