@@ -262,17 +262,8 @@ app.delete('/api/confirmations', (req, res) => {
   }
 });
 
-// Rota catch-all para servir o index.html em produção (SPA)
-if (process.env.NODE_ENV === 'production') {
-  app.get('*', (req, res) => {
-    // Só serve o index.html se não for uma rota da API
-    if (!req.path.startsWith('/api/')) {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-    } else {
-      res.status(404).json({ success: false, error: 'API endpoint not found' });
-    }
-  });
-}
+// Em produção, o nginx serve os arquivos estáticos
+// O Express só serve as rotas da API
 
 // Inicia o servidor
 app.listen(PORT, () => {
