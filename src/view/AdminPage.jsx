@@ -1,25 +1,29 @@
 import { useState, useEffect } from "react";
-import { obterTodasConfirmacoes, limparTodasConfirmacoes, mockData } from "../data/mockData.js";
+import { mockData } from "../data/mockData.js";
+import { useAdminPanel } from "../application/hooks/useAdminPanel.js";
 import "../css/weddingSite/WeddingSite.css";
 
 export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
-  const [confirmacoes, setConfirmacoes] = useState({});
   const [senha, setSenha] = useState("");
   const [autenticado, setAutenticado] = useState(false);
   const [mostrarSenha, setMostrarSenha] = useState(false);
 
   const SENHA_ADMIN = "004Rg~";
 
+  // Usa o hook do painel admin
+  const { 
+    confirmacoes, 
+    loading, 
+    error, 
+    carregarConfirmacoes, 
+    limparConfirmacoes 
+  } = useAdminPanel();
+
   useEffect(() => {
     if (autenticado) {
       carregarConfirmacoes();
     }
-  }, [autenticado]);
-
-  const carregarConfirmacoes = () => {
-    const todasConfirmacoes = obterTodasConfirmacoes();
-    setConfirmacoes(todasConfirmacoes);
-  };
+  }, [autenticado, carregarConfirmacoes]);
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -187,11 +191,14 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
     }
   };
 
-  const limparConfirmacoes = () => {
+  const handleLimparConfirmacoes = async () => {
     if (window.confirm('Tem certeza que deseja limpar todas as confirmações? Esta ação não pode ser desfeita!')) {
-      limparTodasConfirmacoes();
-      setConfirmacoes({});
-      alert('Todas as confirmações foram limpas!');
+      const result = await limparConfirmacoes();
+      if (result.success) {
+        alert('Todas as confirmações foram limpas!');
+      } else {
+        alert(`Erro: ${result.error}`);
+      }
     }
   };
 
@@ -320,18 +327,39 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
           
           <button 
             className="btn" 
-            onClick={limparConfirmacoes}
+            onClick={handleLimparConfirmacoes}
             style={{ backgroundColor: '#dc3545' }}
+            disabled={loading}
           >
-            🗑️ Limpar Todas
+            {loading ? '⏳ Processando...' : '🗑️ Limpar Todas'}
           </button>
         </div>
+
+        {/* Indicador de erro */}
+        {error && (
+          <div style={{
+            padding: '12px',
+            backgroundColor: '#F8D7DA',
+            border: '1px solid #F5C6CB',
+            borderRadius: '8px',
+            color: '#721C24',
+            fontSize: '14px',
+            marginBottom: '20px',
+            textAlign: 'center'
+          }}>
+            ❌ {error}
+          </div>
+        )}
 
         {/* Lista de Confirmações - Individual */}
         <div className="card" style={{ padding: '20px', marginBottom: '40px' }}>
           <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>Lista de Confirmações</h3>
           
-          {Object.keys(confirmacoes).length === 0 ? (
+          {loading ? (
+            <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
+              ⏳ Carregando confirmações...
+            </p>
+          ) : Object.keys(confirmacoes).length === 0 ? (
             <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
               Nenhuma confirmação encontrada.
             </p>

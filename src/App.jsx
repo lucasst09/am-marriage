@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
-import WeddingSite from './view/WeddingSite';
+import WeddingSite from './view/WeddingSiteRefactored';
 import AdminPage from './view/AdminPage';
 import GiftsPage from './view/GiftsPage';
 

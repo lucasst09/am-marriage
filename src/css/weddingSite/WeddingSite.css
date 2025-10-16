@@ -427,6 +427,7 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100%;
 }
 
 .gift-card-title {
@@ -460,12 +461,13 @@ a {
 /* Placeholder para imagens das cotas */
 .gift-image {
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 3 / 3;
   border-radius: 12px;
-  background: #F0EDE6;
-  border: 1px dashed #E5DED6;
   margin-bottom: 12px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .gifts-note {
@@ -483,8 +485,8 @@ a {
 
 .gift-image img {
   width: 100%;
-  height: 100%;
-  object-fit: cover; /* mantém todas com o mesmo preenchimento */
+  height: 68%;
+  object-fit: contain; /* mantém a proporção e mostra a imagem completa */
 }
 
 .gift-hint {
@@ -540,6 +542,7 @@ a {
   display: flex;
   gap: 8px;
   justify-content: center;
+  margin-top: auto;
 }
 
 .gifts-footnote {
@@ -1254,10 +1257,14 @@ img {
   
   .gift-image {
     height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
   .gift-image img {
     height: 100px;
+    object-fit: contain;
   }
   
   .gift-title {
@@ -1336,10 +1343,15 @@ img {
   
   .gift-image {
     height: 80px;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
   }
   
   .gift-image img {
     height: 80px;
+    object-fit: contain;
   }
   
   .gift-title {
@@ -1364,7 +1376,6 @@ img {
   }
 }
 
-/* Footer Responsive */
 @media (max-width: 768px) {
   .footer .container {
     flex-direction: column;
