@@ -23,7 +23,6 @@ export function ConfirmationSuccessModal({ isOpen, onClose }) {
             margin: '0 auto'
           }}>✓</div>
           <h3 style={{marginTop: '12px', color: '#2D5016'}}>Confirmação enviada!</h3>
-          <p style={{marginTop: '6px', color: '#8C857E'}}>Você receberá os detalhes por e‑mail/WhatsApp.</p>
           <button 
             className="btn" 
             style={{marginTop: '16px'}} 
