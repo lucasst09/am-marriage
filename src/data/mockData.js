@@ -3,7 +3,7 @@ export const mockData = {
   "andre": {
     nome: "André Ricardo",
     dependentes: [
-      { id: 2, nome: "Marilene", tipo: "dependente" }
+      { id: 1, nome: "Marilene", tipo: "dependente" }
     ]
   },
   "victor": {
@@ -18,7 +18,7 @@ export const mockData = {
     nome: "Lucas Torres",
     dependentes: [
       { id: 1, nome: "Maria Eduarda", tipo: "dependente" },
-      { id: 1, nome: "João Pedro", tipo: "dependente" }
+      { id: 2, nome: "João Pedro", tipo: "dependente" }
     ]
   },
   "wellington": {
@@ -28,31 +28,24 @@ export const mockData = {
       { id: 2, nome: "Gabriela", tipo: "dependente" }
     ] 
   },
-  "ana": {
-    nome: "Ana",
-    dependentes: [
-      { id: 1, nome: "Lucas", tipo: "dependente" },
-      { id: 2, nome: "Julia", tipo: "dependente" }
-    ]
-  },
   "rafael": {
     nome: "Rafael",
-    dependentes: [
+    dependentes: [  
       { id: 1, nome: "Aline", tipo: "dependente" },  
       { id: 2, nome: "Lucas Teles", tipo: "dependente" },
       { id: 3, nome: "Gabriel", tipo: "dependente" }
     ]
   },
   "riccardo": {
-    nome: "Sofia",
-    dependentes: [
+    nome: "Riccardo",
+    dependentes: [  
       { id: 1, nome: "Andréia", tipo: "dependente" },  
       { id: 2, nome: "Pietro", tipo: "dependente" }
     ]
   },
   "vicente": {
     nome: "Vicente",
-    dependentes: [
+    dependentes: [ 
       { id: 1, nome: "Marli", tipo: "dependente" },  
       { id: 2, nome: "Arthur", tipo: "dependente" }
     ]
@@ -66,7 +59,8 @@ export const mockData = {
   "sérgio": {
     nome: "Sérgio",
     dependentes: [
-      { id: 1, nome: "Claudia", tipo: "dependente" }
+      { id: 1, nome: "Claudia", tipo: "dependente" },
+      { id: 2, nome: "Sérgio Guilherme", tipo: "dependente" }
     ]
   },
   "félix": {
@@ -111,6 +105,58 @@ export const mockData = {
     dependentes: [
       { id: 1, nome: "Maurina", tipo: "dependente" }
     
+    ]
+  },
+  "josé guilherme": {
+    nome: "José Guilherme",
+    dependentes: [
+      { id: 1, nome: "José Guilherme", tipo: "dependente" }
+    ]
+  },
+  "wilson ribeiro": {
+    nome: "Wilson Ribeiro",
+    dependentes: [
+      { id: 1, nome: "Maria Abadia", tipo: "dependente" }
+    ]
+  },
+  "alex": {
+    nome: "Alex",
+    dependentes: [
+      { id: 1, nome: "Ione", tipo: "dependente" },
+      { id: 2, nome: "Marcos", tipo: "dependente" },
+      { id: 3, nome: "Lurya", tipo: "dependente" }
+    ]
+  },
+  "lucas rossete": {
+    nome: "Lucas Rossete",
+    dependentes: [
+      { id: 1, nome: "Tamires", tipo: "dependente" },
+      { id: 2, nome: "Ana Luiza", tipo: "dependente" },
+      { id: 3, nome: "Alice", tipo: "dependente" }
+    ]
+  },
+  "alessandra martins": {
+    nome: "Alessandra Martins",
+    dependentes: [
+      { id: 1, nome: "Karen", tipo: "dependente" }
+    ]
+  },
+  "osorio": {
+    nome: "Osorio",
+    dependentes: [
+      { id: 1, nome: "Vania", tipo: "dependente" }
+    ]
+  },
+  "divino": {
+    nome: "Divino",
+    dependentes: [
+      { id: 1, nome: "Valquiria", tipo: "dependente" }
+    ]
+  },
+  "sebastião": {
+    nome: "Sebastião Ramos",
+    dependentes: [
+      { id: 1, nome: "Sebastião Ramos", tipo: "dependente" }
     ]
   },
 };

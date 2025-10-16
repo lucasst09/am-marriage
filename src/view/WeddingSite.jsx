@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import "../css/weddingSite/WeddingSite.css";
 import { obterPessoasDisponiveis, verificarConfirmacaoExistente, salvarConfirmacao } from "../data/mockData.js";
-import carroImage from "../assets/img/carro.jpg";
 import img1 from "../assets/img/image1.jpg";
+import WeddingMenu from "../components/WeddingMenu.jsx";
 
 export default function WeddingSite({ onNavigate, storyPhotos }) {
   const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
   const [dependentesDisponiveis, setDependentesDisponiveis] = useState([]);
-  const [dependentesSelecionados, setDependentesSelecionados] = useState([]);
+  const [pessoasConfirmacao, setPessoasConfirmacao] = useState({});
   const [nomeConvidado, setNomeConvidado] = useState("");
   const [telefone, setTelefone] = useState("");
   const [observacoes, setObservacoes] = useState("");
-  const [opcao, setOpcao] = useState("Vou comparecer");
   const [jaConfirmado, setJaConfirmado] = useState(false);
   const [dadosConfirmacaoExistente, setDadosConfirmacaoExistente] = useState(null);
   const [nomeValido, setNomeValido] = useState(false);
@@ -61,9 +60,7 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
       const pessoas = obterPessoasDisponiveis(nome.toLowerCase());
       
       if (pessoas.length > 0) {
-        const dependentes = pessoas.filter(pessoa => pessoa.tipo === "dependente");
-        setDependentesDisponiveis(dependentes);
-        setDependentesSelecionados([]);
+        setDependentesDisponiveis(pessoas);
         setNomeValido(true);
         
         const confirmacaoExistente = verificarConfirmacaoExistente(nome.toLowerCase());
@@ -72,29 +69,42 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
           setDadosConfirmacaoExistente(confirmacaoExistente);
           setTelefone(confirmacaoExistente.telefone || "");
           setObservacoes(confirmacaoExistente.observacoes || "");
-          setOpcao(confirmacaoExistente.principal === 1 ? "Vou comparecer" : "Não poderei");
           
-          const dependentesConfirmados = dependentes.filter(dep => 
-            confirmacaoExistente.dependentes && confirmacaoExistente.dependentes[dep.id] === 1
-          );
-          setDependentesSelecionados(dependentesConfirmados);
+          // Carregar confirmações individuais de cada pessoa
+          const confirmacoesPessoas = {};
+          pessoas.forEach(pessoa => {
+            if (pessoa.tipo === "convidado") {
+              // Para o convidado principal, usar o campo 'principal'
+              confirmacoesPessoas[pessoa.id] = confirmacaoExistente.principal === 1 ? "Vou comparecer" : "Não poderei";
+            } else {
+              // Para dependentes, usar o campo 'dependentes'
+              confirmacoesPessoas[pessoa.id] = (confirmacaoExistente.dependentes && confirmacaoExistente.dependentes[pessoa.id] === 1) ? "Vou comparecer" : "Não poderei";
+            }
+          });
+          setPessoasConfirmacao(confirmacoesPessoas);
         } else {
           setJaConfirmado(false);
           setDadosConfirmacaoExistente(null);
           setTelefone("");
           setObservacoes("");
-          setOpcao("Vou comparecer");
+          
+          // Inicializar todas as pessoas como "Vou comparecer"
+          const confirmacoesIniciais = {};
+          pessoas.forEach(pessoa => {
+            confirmacoesIniciais[pessoa.id] = "Vou comparecer";
+          });
+          setPessoasConfirmacao(confirmacoesIniciais);
         }
       } else {
         setDependentesDisponiveis([]);
-        setDependentesSelecionados([]);
+        setPessoasConfirmacao({});
         setJaConfirmado(false);
         setDadosConfirmacaoExistente(null);
         setNomeValido(false);
       }
     } else {
       setDependentesDisponiveis([]);
-      setDependentesSelecionados([]);
+      setPessoasConfirmacao({});
       setJaConfirmado(false);
       setDadosConfirmacaoExistente(null);
       setNomeValido(false);
@@ -105,34 +115,13 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
     if (open && firstFieldRef.current) firstFieldRef.current.focus();
   }, [open]);
 
-  useEffect(() => {
-    // Remova este bloco se existir (useEffect do áudio):
-    // useEffect(() => {
-    //   const a = audioRef.current;
-    //   if (!a) return;
-    //   a.loop = true;
-    //   a.muted = true;
-    //   a.volume = 0.25;
-    //   const play = () => a.play().catch(() => {});
-    //   const unmuteAndPlay = () => { a.muted = false; play(); };
-    //   play();
-    //   const events = ['click','touchstart','pointerdown','keydown'];
-    //   events.forEach(ev => window.addEventListener(ev, unmuteAndPlay, { once: true }));
-    //   return () => { events.forEach(ev => window.removeEventListener(ev, unmuteAndPlay)); };
-    // }, []);
-  }, []);
-
-  const toggleDependente = (dependente) => {
+  const handlePessoaConfirmacaoChange = (pessoaId, opcao) => {
     if (jaConfirmado) return;
     
-    setDependentesSelecionados(prev => {
-      const jaSelecionado = prev.find(d => d.id === dependente.id);
-      if (jaSelecionado) {
-        return prev.filter(d => d.id !== dependente.id);
-      } else {
-        return [...prev, dependente];
-      }
-    });
+    setPessoasConfirmacao(prev => ({
+      ...prev,
+      [pessoaId]: opcao
+    }));
   };
 
   const handleSubmit = (e) => {
@@ -149,14 +138,24 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
     }
 
     const dadosConfirmacao = {
-      principal: opcao === "Vou comparecer" ? 1 : 0,
+      principal: 0, // Será definido baseado na confirmação do convidado principal
       dependentes: {},
       telefone: telefone,
       observacoes: observacoes
     };
 
-    dependentesDisponiveis.forEach(dep => {
-      dadosConfirmacao.dependentes[dep.id] = dependentesSelecionados.some(d => d.id === dep.id) ? 1 : 0;
+    // Processar confirmações de cada pessoa
+    dependentesDisponiveis.forEach(pessoa => {
+      const opcaoPessoa = pessoasConfirmacao[pessoa.id] || "Vou comparecer";
+      const vaiComparecer = opcaoPessoa === "Vou comparecer" ? 1 : 0;
+      
+      if (pessoa.tipo === "convidado") {
+        // Para o convidado principal
+        dadosConfirmacao.principal = vaiComparecer;
+      } else {
+        // Para dependentes
+        dadosConfirmacao.dependentes[pessoa.id] = vaiComparecer;
+      }
     });
 
     const sucesso = salvarConfirmacao(nomeConvidado, dadosConfirmacao);
@@ -199,6 +198,13 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
       <header className="header">
         <div className="container">
           <div className="header-top">
+            <button
+              className="hamburger mobile-only"
+              aria-label="Abrir menu"
+              onClick={() => setMenuOpen(true)}
+            >
+              ☰
+            </button>
             <nav className="nav">
               <a href="#home">Início</a>
               <a href="#story">História</a>
@@ -219,6 +225,12 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
           <button className="btn" onClick={() => setOpen(true)}>Confirmar presença</button>
         </div>
       </header>
+      <WeddingMenu 
+        open={menuOpen} 
+        onClose={() => setMenuOpen(false)}
+        onNavigate={onNavigate}
+        onConfirmPresence={() => setOpen(true)}
+      />
 
       {/* Hero Section */}
       <section 
@@ -237,6 +249,9 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
           <div className="hero-buttons">
             <button className="btn" onClick={() => setOpen(true)}>Confirmar Presença</button>
             <a href="#info" className="btn ghost">Ver Detalhes</a>
+          </div>
+          <div className="hero-extra mobile-only">
+            <button className="btn" onClick={(e) => { e.preventDefault(); onNavigate && onNavigate('presentes'); }}>Presentes</button>
           </div>
         </div>
       </section>
@@ -335,20 +350,8 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
         <div className="container">
           <div className="footer-brand">André & Marilene</div>
           <p className="footer-text">Com carinho, agradecemos sua presença.</p>
-          <div className="footer-links">
-            <a href="#home">Início</a>
-            <a href="#gallery">Galeria</a>
-            <a href="#info">Informações</a>
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                onNavigate && onNavigate('presentes');
-              }}
-            >
-              Presentes
-            </a>
-          </div>
+          {/* Removidos os botões do rodapé */}
+          <div className="footer-links"></div>
         </div>
       </footer>
 
@@ -418,13 +421,15 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
                       fontSize: '14px',
                       marginBottom: '16px'
                     }}>
-                      ✅ Nome encontrado! {dependentesDisponiveis.length > 0 ? 'Selecione seus acompanhantes abaixo.' : 'Você pode confirmar sua presença.'}
+                      ✅ Nome encontrado! {dependentesDisponiveis.length > 0 ? 'Confirme a presença de cada pessoa abaixo.' : 'Você pode confirmar sua presença.'}
                     </div>
                   )}
                   
                   {dependentesDisponiveis.length > 0 && (
                     <div className="form-group">
-                      <label className="form-label">Acompanhantes que irão comparecer ({dependentesSelecionados.length})</label>
+                      <label className="form-label">
+                        Confirmação de presença ({Object.values(pessoasConfirmacao).filter(opcao => opcao === "Vou comparecer").length} de {dependentesDisponiveis.length} confirmados)
+                      </label>
                       <div style={{ 
                         marginTop: '8px', 
                         display: 'flex', 
@@ -435,55 +440,46 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
                         borderRadius: '8px',
                         border: '1px solid #EBD9CF'
                       }}>
-                        {dependentesDisponiveis.map(dependente => (
-                          <label key={dependente.id} style={{ 
+                        {dependentesDisponiveis.map(pessoa => (
+                          <div key={pessoa.id} style={{ 
                             display: 'flex', 
                             alignItems: 'center', 
                             gap: '12px', 
-                            cursor: jaConfirmado ? 'not-allowed' : 'pointer',
                             padding: '8px',
                             borderRadius: '6px',
                             backgroundColor: 'transparent',
-                            transition: 'background-color 0.2s',
                             opacity: jaConfirmado ? 0.6 : 1
                           }}>
-                            <input
-                              type="checkbox"
-                              checked={dependentesSelecionados.some(d => d.id === dependente.id)}
-                              onChange={() => toggleDependente(dependente)}
-                              disabled={jaConfirmado}
-                              style={{ 
-                                margin: 0,
-                                width: '16px',
-                                height: '16px',
-                                accentColor: '#2D5016'
-                              }}
-                            />
                             <span style={{ 
                               fontWeight: 'normal',
                               color: '#2E2A27',
-                              fontSize: '14px'
+                              fontSize: '14px',
+                              minWidth: '120px'
                             }}>
-                              {dependente.nome}
+                              {pessoa.nome}
                             </span>
-                          </label>
+                            <select
+                              value={pessoasConfirmacao[pessoa.id] || "Vou comparecer"}
+                              onChange={(e) => handlePessoaConfirmacaoChange(pessoa.id, e.target.value)}
+                              disabled={jaConfirmado}
+                              style={{ 
+                                padding: '6px 8px',
+                                borderRadius: '4px',
+                                border: '1px solid #EBD9CF',
+                                backgroundColor: 'white',
+                                fontSize: '14px',
+                                color: '#2E2A27',
+                                minWidth: '140px'
+                              }}
+                            >
+                              <option value="Vou comparecer">Vou comparecer</option>
+                              <option value="Não poderei">Não poderei</option>
+                            </select>
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
-                  
-                  <div className="form-group">
-                    <label className="form-label">Opção</label>
-                    <select 
-                      className="form-select"
-                      value={opcao}
-                      onChange={(e) => setOpcao(e.target.value)}
-                      disabled={jaConfirmado || !nomeValido}
-                    >
-                      <option>Vou comparecer</option>
-                      <option>Não poderei</option>
-                    </select>
-                  </div>
                   
                   <div className="form-group">
                     <label className="form-label">Telefone (WhatsApp)</label>
@@ -525,7 +521,7 @@ export default function WeddingSite({ onNavigate, storyPhotos }) {
                     marginTop: '8px',
                     textAlign: 'center'
                   }}>
-                    Dica: digite seu nome para ver seus acompanhantes disponíveis.
+                    Dica: digite seu nome para ver todas as pessoas do seu grupo.
                   </p>
                 </form>
               </>

@@ -9,9 +9,8 @@ services:
       - "80:80"
     environment:
       - NODE_ENV=production
-    # Health check
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ["CMD", "nginx", "-t"]
       interval: 30s
       timeout: 10s
       retries: 3
