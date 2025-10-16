@@ -74,6 +74,7 @@ export default function GiftsPage({ onNavigate }) {
               <p className="pix-key-value">{pixKey}</p>
               <div className="gift-actions">
                 <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
+                <button className="btn ghost" onClick={() => copyText("Chave Pix: " + pixKey)}>Copiar descrição</button>
               </div>
             </div>
 
@@ -81,6 +82,10 @@ export default function GiftsPage({ onNavigate }) {
               <h3 className="gift-card-title">QR Code Pix</h3>
               <img src="/pix-qr.png" alt="QR Code Pix" className="qr-image" />
               <p className="gift-hint">Abra o app do seu banco e aponte para o QR</p>
+              <div className="gift-actions">
+                <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
+                <button className="btn ghost" onClick={() => copyText("QR Code Pix - Abra o app do seu banco e aponte para o QR")}>Copiar descrição</button>
+              </div>
             </div>
           </div>
 
@@ -130,7 +135,7 @@ export default function GiftsPage({ onNavigate }) {
             ))}
           </div>
 
-          <p className="gifts-footnote">Sua presença é ver você conosco neste dia tão importante. Obrigado!</p>
+          <p className="gifts-footnote">A sua presença torna este momento ainda mais especial. Com carinho, André & Marilene.</p>
         </div>
       </section>
     </div>
