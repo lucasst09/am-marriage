@@ -52,78 +52,133 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
       doc.text('Nº', 20, y);
       doc.text('Nome', 30, y);
       doc.text('Status', 80, y);
-      doc.text('Telefone', 120, y);
-      doc.text('Acompanhantes', 160, y);
+      doc.text('Tipo', 120, y);
+      doc.text('Telefone', 160, y);
       doc.text('Observações', 20, y + 5);
       
       doc.line(20, y + 8, 190, y + 8);
       y += 15;
       
       Object.entries(confirmacoes).forEach(([nome, dados]) => {
-        if (y > 270) { // Nova página se necessário
-          doc.addPage();
-          y = 20;
-        }
-        
         const dadosPessoa = mockData[nome.toLowerCase()];
         const nomeCompleto = dadosPessoa ? dadosPessoa.nome : nome;
-        const status = dados.principal === 1 ? 'Vai comparecer' : 'Não vai comparecer';
         
-        // Nome e status na primeira linha
-        doc.setFontSize(9);
-        doc.text(contador.toString(), 20, y);
-        doc.text(nomeCompleto, 30, y);
-        doc.text(status, 80, y);
-        doc.text(dados.telefone || '-', 120, y);
+        // Processar todas as pessoas do grupo (principal + dependentes)
+        const todasPessoas = [];
         
-        // Acompanhantes
-        if (dadosPessoa && dadosPessoa.dependentes.length > 0) {
-          const acompanhantes = dadosPessoa.dependentes
-            .filter(dep => dados.dependentes[dep.id] === 1)
-            .map(dep => dep.nome)
-            .join(', ');
-          doc.text(acompanhantes || 'Nenhum', 160, y);
-        } else {
-          doc.text('Nenhum', 160, y);
+        // Adicionar o convidado principal
+        if (dadosPessoa) {
+          todasPessoas.push({
+            nome: dadosPessoa.nome,
+            status: dados.principal === 1 ? 'Vai comparecer' : 'Não vai comparecer',
+            tipo: 'Principal'
+          });
+          
+          // Adicionar dependentes
+          if (dadosPessoa.dependentes.length > 0) {
+            dadosPessoa.dependentes.forEach(dep => {
+              const statusDep = dados.dependentes[dep.id] === 1 ? 'Vai comparecer' : 'Não vai comparecer';
+              todasPessoas.push({
+                nome: dep.nome,
+                status: statusDep,
+                tipo: 'Acompanhante'
+              });
+            });
+          }
         }
         
-        y += 5;
-        
-        // Observações na segunda linha
-        if (dados.observacoes) {
-          doc.text(`Obs: ${dados.observacoes}`, 20, y);
-          y += 5;
-        }
-        
-        // Data da confirmação
-        const dataConfirmacao = new Date(dados.dataConfirmacao).toLocaleDateString('pt-BR');
-        doc.text(`Confirmado em: ${dataConfirmacao}`, 20, y);
-        
-        y += 10;
-        contador++;
+        // Exibir cada pessoa individualmente
+        todasPessoas.forEach((pessoa, index) => {
+          if (y > 270) { // Nova página se necessário
+            doc.addPage();
+            y = 20;
+          }
+          
+          // Nome e status na primeira linha
+          doc.setFontSize(9);
+          doc.text(contador.toString(), 20, y);
+          doc.text(pessoa.nome, 30, y);
+          doc.text(pessoa.status, 80, y);
+          doc.text(pessoa.tipo, 120, y);
+          
+          // Só mostrar telefone e observações na primeira pessoa do grupo
+          if (index === 0) {
+            doc.text(dados.telefone || '-', 160, y);
+            
+            y += 5;
+            
+            // Observações na segunda linha
+            if (dados.observacoes) {
+              doc.text(`Obs: ${dados.observacoes}`, 20, y);
+              y += 5;
+            }
+            
+            // Data da confirmação
+            const dataConfirmacao = new Date(dados.dataConfirmacao).toLocaleDateString('pt-BR');
+            doc.text(`Confirmado em: ${dataConfirmacao}`, 20, y);
+          } else {
+            // Para acompanhantes, deixar telefone e observações vazios
+            doc.text('-', 160, y);
+          }
+          
+          y += 10;
+          contador++;
+        });
       });
       
-      // Estatísticas no final
-      const totalVao = Object.values(confirmacoes).filter(c => c.principal === 1).length;
-      const totalNaoVao = Object.values(confirmacoes).filter(c => c.principal === 0).length;
-      const totalAcompanhantes = Object.values(confirmacoes).reduce((total, c) => {
-        return total + Object.values(c.dependentes || {}).filter(v => v === 1).length;
-      }, 0);
+      // Estatísticas no final - calculando individualmente
+      let totalPessoasVao = 0;
+      let totalPessoasNaoVao = 0;
+      let totalPrincipaisVao = 0;
+      let totalPrincipaisNaoVao = 0;
+      let totalAcompanhantesVao = 0;
+      let totalAcompanhantesNaoVao = 0;
+      
+      Object.entries(confirmacoes).forEach(([nome, dados]) => {
+        const dadosPessoa = mockData[nome.toLowerCase()];
+        
+        // Contar principal
+        if (dados.principal === 1) {
+          totalPrincipaisVao++;
+          totalPessoasVao++;
+        } else {
+          totalPrincipaisNaoVao++;
+          totalPessoasNaoVao++;
+        }
+        
+        // Contar dependentes
+        if (dadosPessoa && dadosPessoa.dependentes.length > 0) {
+          dadosPessoa.dependentes.forEach(dep => {
+            if (dados.dependentes[dep.id] === 1) {
+              totalAcompanhantesVao++;
+              totalPessoasVao++;
+            } else {
+              totalAcompanhantesNaoVao++;
+              totalPessoasNaoVao++;
+            }
+          });
+        }
+      });
       
       y += 10;
       doc.setFontSize(12);
-      doc.text('RESUMO:', 20, y);
+      doc.text('RESUMO INDIVIDUAL:', 20, y);
       y += 8;
       doc.setFontSize(10);
-      doc.text(`• Total de convidados que vão: ${totalVao}`, 20, y);
+      doc.text(`• Total de pessoas que vão: ${totalPessoasVao}`, 20, y);
       y += 5;
-      doc.text(`• Total de convidados que não vão: ${totalNaoVao}`, 20, y);
+      doc.text(`• Total de pessoas que não vão: ${totalPessoasNaoVao}`, 20, y);
       y += 5;
-      doc.text(`• Total de acompanhantes: ${totalAcompanhantes}`, 20, y);
+      doc.text(`• Convidados principais que vão: ${totalPrincipaisVao}`, 20, y);
       y += 5;
-      doc.text(`• Total de pessoas no evento: ${totalVao + totalAcompanhantes}`, 20, y);
+      doc.text(`• Convidados principais que não vão: ${totalPrincipaisNaoVao}`, 20, y);
+      y += 5;
+      doc.text(`• Acompanhantes que vão: ${totalAcompanhantesVao}`, 20, y);
+      y += 5;
+      doc.text(`• Acompanhantes que não vão: ${totalAcompanhantesNaoVao}`, 20, y);
+      y += 5;
+      doc.text(`• Total de pessoas no evento: ${totalPessoasVao}`, 20, y);
       
-      // Salvar o PDF
       doc.save(`confirmacoes-casamento-${new Date().toISOString().split('T')[0]}.pdf`);
       
     } catch (error) {
@@ -142,7 +197,7 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
 
   if (!autenticado) {
     return (
-      <div className="min-h-screen" style={{ background: "#F8F4EE", color: "#2E2A27", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div className="min-h-screen" style={{color: "#2E2A27", display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ 
           background: 'white', 
           padding: '40px', 
@@ -272,7 +327,88 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
           </button>
         </div>
 
-        {/* Novo: gestão da galeria */}
+        {/* Lista de Confirmações - Individual */}
+        <div className="card" style={{ padding: '20px', marginBottom: '40px' }}>
+          <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>Lista de Confirmações</h3>
+          
+          {Object.keys(confirmacoes).length === 0 ? (
+            <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
+              Nenhuma confirmação encontrada.
+            </p>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ 
+                width: '100%', 
+                borderCollapse: 'collapse',
+                fontSize: '14px'
+              }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#f8f9fa' }}>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Nome</th>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Status</th>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Tipo</th>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Telefone</th>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Observações</th>
+                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Data</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(confirmacoes).map(([nome, dados]) => {
+                    const dadosPessoa = mockData[nome.toLowerCase()];
+                    const todasPessoas = [];
+                    
+                    // Adicionar o convidado principal
+                    if (dadosPessoa) {
+                      todasPessoas.push({
+                        nome: dadosPessoa.nome,
+                        status: dados.principal === 1 ? 'Vai comparecer' : 'Não vai comparecer',
+                        tipo: 'Principal',
+                        telefone: dados.telefone || '-',
+                        observacoes: dados.observacoes || '-',
+                        data: new Date(dados.dataConfirmacao).toLocaleDateString('pt-BR')
+                      });
+                      
+                      // Adicionar dependentes
+                      if (dadosPessoa.dependentes.length > 0) {
+                        dadosPessoa.dependentes.forEach(dep => {
+                          const statusDep = dados.dependentes[dep.id] === 1 ? 'Vai comparecer' : 'Não vai comparecer';
+                          todasPessoas.push({
+                            nome: dep.nome,
+                            status: statusDep,
+                            tipo: 'Acompanhante',
+                            telefone: '-',
+                            observacoes: '-',
+                            data: '-'
+                          });
+                        });
+                      }
+                    }
+                    
+                    return todasPessoas.map((pessoa, index) => (
+                      <tr key={`${nome}-${index}`} style={{ borderBottom: '1px solid #dee2e6' }}>
+                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{pessoa.nome}</td>
+                        <td style={{ 
+                          padding: '12px', 
+                          border: '1px solid #dee2e6',
+                          color: pessoa.status === 'Vai comparecer' ? '#28a745' : '#dc3545',
+                          fontWeight: 'bold'
+                        }}>
+                          {pessoa.status}
+                        </td>
+                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{pessoa.tipo}</td>
+                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{pessoa.telefone}</td>
+                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{pessoa.observacoes}</td>
+                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{pessoa.data}</td>
+                      </tr>
+                    ));
+                  }).flat()}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+
+        {/* Gestão da galeria */}
         <div className="card" style={{ padding: '20px', marginBottom: '40px' }}>
           <h3 style={{ marginBottom: '16px', textAlign: 'center' }}>Galeria de Fotos</h3>
           <label className="btn">
@@ -308,68 +444,6 @@ export default function AdminPage({ onAddPhotos, storyPhotos, onRemovePhoto }) {
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="card" style={{ padding: '20px' }}>
-          <h3 style={{ marginBottom: '20px', textAlign: 'center' }}>Lista de Confirmações</h3>
-          
-          {Object.keys(confirmacoes).length === 0 ? (
-            <p style={{ textAlign: 'center', color: '#666', fontStyle: 'italic' }}>
-              Nenhuma confirmação encontrada.
-            </p>
-          ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ 
-                width: '100%', 
-                borderCollapse: 'collapse',
-                fontSize: '14px'
-              }}>
-                <thead>
-                  <tr style={{ backgroundColor: '#f8f9fa' }}>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Nome</th>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Status</th>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Telefone</th>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Acompanhantes</th>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Observações</th>
-                    <th style={{ padding: '12px', border: '1px solid #dee2e6', textAlign: 'left' }}>Data</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {Object.entries(confirmacoes).map(([nome, dados]) => {
-                    const dadosPessoa = mockData[nome.toLowerCase()];
-                    const nomeCompleto = dadosPessoa ? dadosPessoa.nome : nome;
-                    const status = dados.principal === 1 ? 'Vai comparecer' : 'Não vai comparecer';
-                    const acompanhantes = dadosPessoa && dadosPessoa.dependentes.length > 0 
-                      ? dadosPessoa.dependentes
-                          .filter(dep => dados.dependentes[dep.id] === 1)
-                          .map(dep => dep.nome)
-                          .join(', ') || 'Nenhum'
-                      : 'Nenhum';
-                    
-                    return (
-                      <tr key={nome} style={{ borderBottom: '1px solid #dee2e6' }}>
-                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{nomeCompleto}</td>
-                        <td style={{ 
-                          padding: '12px', 
-                          border: '1px solid #dee2e6',
-                          color: dados.principal === 1 ? '#28a745' : '#dc3545',
-                          fontWeight: 'bold'
-                        }}>
-                          {status}
-                        </td>
-                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{dados.telefone || '-'}</td>
-                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{acompanhantes}</td>
-                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>{dados.observacoes || '-'}</td>
-                        <td style={{ padding: '12px', border: '1px solid #dee2e6' }}>
-                          {new Date(dados.dataConfirmacao).toLocaleDateString('pt-BR')}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
         </div>
       </div>
     </div>
