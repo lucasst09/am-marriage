@@ -8,7 +8,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.NODE_ENV === 'production' ? 3001 : (process.env.PORT || 3001);
 const CONFIRMATIONS_FILE = process.env.NODE_ENV === 'production' 
   ? path.join(__dirname, 'data', 'confirmations.json')
   : path.join(__dirname, 'confirmations.json');

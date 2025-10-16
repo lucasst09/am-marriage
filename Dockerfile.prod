@@ -19,8 +19,8 @@ RUN npm run build
 # Stage 2: Produção com nginx + Express
 FROM nginx:alpine
 
-# Instalar Node.js no container nginx
-RUN apk add --no-cache nodejs npm
+# Instalar Node.js e curl no container nginx
+RUN apk add --no-cache nodejs npm curl
 
 WORKDIR /app
 
