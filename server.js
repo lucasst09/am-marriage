@@ -265,7 +265,12 @@ app.delete('/api/confirmations', (req, res) => {
 // Rota catch-all para servir o index.html em produção (SPA)
 if (process.env.NODE_ENV === 'production') {
   app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    // Só serve o index.html se não for uma rota da API
+    if (!req.path.startsWith('/api/')) {
+      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    } else {
+      res.status(404).json({ success: false, error: 'API endpoint not found' });
+    }
   });
 }
 
