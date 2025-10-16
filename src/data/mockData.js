@@ -165,7 +165,7 @@ export const mockData = {
 const CONFIRMACOES_KEY = 'amMarriage_confirmacoes';
 
 // Função para obter confirmações do localStorage
-const obterConfirmacoesDoStorage = () => {
+export const obterConfirmacoesDoStorage = () => {
   try {
     const confirmacoes = localStorage.getItem(CONFIRMACOES_KEY);
     return confirmacoes ? JSON.parse(confirmacoes) : {};
@@ -176,7 +176,7 @@ const obterConfirmacoesDoStorage = () => {
 };
 
 // Função para salvar confirmações no localStorage
-const salvarConfirmacoesNoStorage = (confirmacoes) => {
+export const salvarConfirmacoesNoStorage = (confirmacoes) => {
   try {
     localStorage.setItem(CONFIRMACOES_KEY, JSON.stringify(confirmacoes));
     return true;

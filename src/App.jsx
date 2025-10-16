@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import './App.css';
-import WeddingSite from './view/WeddingSite';
-import AdminPage from './view/AdminPage';
+import WeddingSite from './view/WeddingSiteRefactored';
+import AdminPage from './view/AdminPageRefactored';
 import GiftsPage from './view/GiftsPage';
 
 export default function App() {
