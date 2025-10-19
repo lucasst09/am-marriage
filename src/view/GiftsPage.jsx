@@ -37,6 +37,7 @@ export default function GiftsPage({ onNavigate }) {
     try { document.execCommand('copy'); } catch (_) {}
     document.body.removeChild(textarea);
   };
+  const cartaoLink = "https://exemplo-seu-link-de-cartao.com/pagamento"; // substitua pelo link real
 
   return (
     <div className="wedding-site">
@@ -74,7 +75,9 @@ export default function GiftsPage({ onNavigate }) {
               <p className="pix-key-value">{pixKey}</p>
               <div className="gift-actions">
                 <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
-                <button className="btn ghost" onClick={() => copyText("Chave Pix: " + pixKey)}>Copiar descrição</button>
+                <button className="btn ghost" onClick={() => copyText("Chave Pix: " + pixKey)}>
+                  Copiar descrição
+                </button>
               </div>
             </div>
 
@@ -84,7 +87,22 @@ export default function GiftsPage({ onNavigate }) {
               <p className="gift-hint">Abra o app do seu banco e aponte para o QR</p>
               <div className="gift-actions">
                 <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
-                <button className="btn ghost" onClick={() => copyText("QR Code Pix - Abra o app do seu banco e aponte para o QR")}>Copiar descrição</button>
+                <button className="btn ghost" onClick={() => copyText("QR Code Pix - Abra o app do seu banco e aponte para o QR")}>
+                  Copiar descrição
+                </button>
+              </div>
+            </div>
+
+            <div className="gift-card">
+              <h3 className="gift-card-title">Contribua com cartão de crédito</h3>
+              <p className="gift-hint">Pague com cartão via link seguro</p>
+              <div className="gift-actions">
+                <button className="btn" onClick={() => window.open(cartaoLink, "_blank")}>
+                  Abrir link do cartão
+                </button>
+                <button className="btn ghost" onClick={() => copyText(cartaoLink)}>
+                  Copiar link
+                </button>
               </div>
             </div>
           </div>
