@@ -37,6 +37,13 @@ export default function GiftsPage({ onNavigate }) {
     try { document.execCommand('copy'); } catch (_) {}
     document.body.removeChild(textarea);
   };
+  const cartaoLink = "https://mpago.la/1hh77F4"; // Link do Mercado Pago
+  const cartaoLink120 = "https://mpago.la/285rHup"; // Link do Mercado Pago para presente de R$120,00
+  const cartaoLink150 = "https://mpago.la/24JF1oR"; // Link do Mercado Pago para presente de R$150,00
+  const cartaoLink180 = "https://mpago.la/1SmYcA4"; // Link do Mercado Pago para presente de R$180,00
+  const cartaoLink200 = "https://mpago.la/2aqpy8N"; // Link do Mercado Pago para presente de R$200,00
+  const cartaoLink250 = "https://mpago.la/1zXgTTT"; // Link do Mercado Pago para presente de R$250,00
+  const cartaoLink300 = "https://mpago.la/2kiSoeo"; // Link do Mercado Pago para presente de R$300,00
 
   return (
     <div className="wedding-site">
@@ -74,7 +81,9 @@ export default function GiftsPage({ onNavigate }) {
               <p className="pix-key-value">{pixKey}</p>
               <div className="gift-actions">
                 <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
-                <button className="btn ghost" onClick={() => copyText("Chave Pix: " + pixKey)}>Copiar descrição</button>
+                <button className="btn ghost" onClick={() => copyText("Chave Pix: " + pixKey)}>
+                  Copiar descrição
+                </button>
               </div>
             </div>
 
@@ -84,7 +93,22 @@ export default function GiftsPage({ onNavigate }) {
               <p className="gift-hint">Abra o app do seu banco e aponte para o QR</p>
               <div className="gift-actions">
                 <button className="btn" onClick={() => copyText(pixKey)}>Copiar chave Pix</button>
-                <button className="btn ghost" onClick={() => copyText("QR Code Pix - Abra o app do seu banco e aponte para o QR")}>Copiar descrição</button>
+                <button className="btn ghost" onClick={() => copyText("QR Code Pix - Abra o app do seu banco e aponte para o QR")}>
+                  Copiar descrição
+                </button>
+              </div>
+            </div>
+
+            <div className="gift-card">
+              <h3 className="gift-card-title">Contribua com cartão de crédito</h3>
+              <p className="gift-hint">Pague com cartão via link seguro</p>
+              <div className="gift-actions">
+                <button className="btn" onClick={() => window.open(cartaoLink, "_blank")}>
+                  Abrir link do cartão
+                </button>
+                <button className="btn ghost" onClick={() => copyText(cartaoLink)}>
+                  Copiar link
+                </button>
               </div>
             </div>
           </div>
@@ -129,7 +153,26 @@ export default function GiftsPage({ onNavigate }) {
                   >
                     Copiar chave Pix
                   </button>
-                  <button className="btn ghost" onClick={() => copyText(cota.descricao)}>Copiar descrição</button>
+                  <button 
+                    className="btn ghost" 
+                    onClick={() => 
+                      cota.titulo === "Café da manhã a dois" 
+                        ? window.open(cartaoLink120, "_blank")
+                        : cota.titulo === "Piquenique ao pôr do sol"
+                        ? window.open(cartaoLink150, "_blank")
+                        : cota.titulo === "Dia de Spa a dois"
+                        ? window.open(cartaoLink180, "_blank")
+                        : cota.titulo === "Um jantar romântico"
+                        ? window.open(cartaoLink200, "_blank")
+                        : cota.titulo === "Ensaio fotográfico"
+                        ? window.open(cartaoLink250, "_blank")
+                        : cota.titulo === "Uma noite no resort"
+                        ? window.open(cartaoLink300, "_blank")
+                        : window.open(cartaoLink, "_blank")
+                    }
+                  >
+                    Pagamento com cartão
+                  </button>
                 </div>
               </div>
             ))}
