@@ -25,7 +25,8 @@ export const mockData = {
     nome: "Wellington",
     dependentes: [
       { id: 1, nome: "Andresina", tipo: "dependente" },
-      { id: 2, nome: "Gabriela", tipo: "dependente" }
+      { id: 2, nome: "Gabriela", tipo: "dependente" },
+      { id: 3, nome: "Thiago", tipo: "dependente" }
     ] 
   },
   "rafael": {
